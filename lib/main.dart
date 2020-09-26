@@ -1,8 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'screen0_home.dart';
 import 'screen1_piano.dart';
 import 'screen2_xylophone.dart';
+import 'screen3_drum.dart';
 import 'startScreen.dart';
 import 'loginScreen.dart';
 import 'signupScreen.dart';
@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => Screen0(),
         '/piano': (context) => Screen1(),
         '/xylophone': (context) => Screen2(),
+        '/drum': (context) => Screen3(),
 
       }
     );

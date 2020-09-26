@@ -26,3 +26,6 @@ flutter:
     - assets/
     - assets/audios/
     - assets/images/
+    - assets/audios/piano/
+    - assets/audios/xylophone/
+    - assets/audios/drum/

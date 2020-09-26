@@ -29,6 +29,13 @@ class Screen0 extends StatelessWidget {
                 Navigator.pushNamed(context, '/xylophone');
               },
             ),
+            RaisedButton(
+              color: Colors.red,
+              child: Text('Drum'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/drum');
+              },
+            ),
             SizedBox(
               width: 500,
               height: 500,
