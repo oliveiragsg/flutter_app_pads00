@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'screen0_home.dart';
 import 'screen1_piano.dart';
 import 'screen2_xylophone.dart';
@@ -17,13 +18,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => startScreen(),
-        '/signup': (context) => signupScreen(),
-        '/login': (context) => loginScreen(),
-        '/home': (context) => Screen0(),
-        '/piano': (context) => Screen1(),
-        '/xylophone': (context) => Screen2(),
-        '/drum': (context) => Screen3(),
+        AppRoutes.START : (_) => startScreen(),
+        AppRoutes.SIGNUP : (_) => signupScreen(),
+        AppRoutes.LOGIN : (_) => loginScreen(),
+        AppRoutes.HOME : (_) => Screen0(),
+        AppRoutes.PIANO : (_) => Screen1(),
+        AppRoutes.XYLOPHONE : (_) => Screen2(),
+        AppRoutes.DRUM : (_) => Screen3(),
+        // '/': (context) => startScreen(),
+        // '/signup': (context) => signupScreen(),
+        // '/login': (context) => loginScreen(),
+        // '/home': (context) => Screen0(),
+        // '/piano': (context) => Screen1(),
+        // '/xylophone': (context) => Screen2(),
+        // '/drum': (context) => Screen3(),
 
       }
     );
