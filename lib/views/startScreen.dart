@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/views/loginScreen.dart';
 
 class startScreen extends StatelessWidget {
@@ -105,8 +106,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                   child: Text('Next'),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      email.myEmail = myControllerEmail.text;
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email)));
+                      email.email = myControllerEmail.text;
+                      if(Users().byEmail(email.email) != null) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email)));
+                      }
+                      else {
+                        Scaffold.of(context).showSnackBar(SnackBar(content: Text('Esta conta não existe! Email: ${email.email}')));
+                      }
                     }
                     else {
                       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Há campos que precisam ser preenchidos para prosseguir.')));

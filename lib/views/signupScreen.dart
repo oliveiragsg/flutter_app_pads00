@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/models/user.dart';
+import 'package:flutter_app_pads00/provider/users.dart';
+import 'package:provider/provider.dart';
 
 
 class signupScreen extends StatefulWidget {
@@ -50,6 +53,7 @@ class MyCustomForm extends StatefulWidget {
 
 class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
+  final Map<String, String> _formData = {};
   bool checkBox = false;
 
   @override
@@ -63,6 +67,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: TextFormField(
+                onSaved: (value) => _formData['name']=value,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 22.0,
@@ -91,6 +96,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: TextFormField(
+                onSaved: (value) => _formData['email']=value,
                 keyboardType: TextInputType.emailAddress,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -149,6 +155,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: TextFormField(
+                onSaved: (value) => _formData['password']=value,
                 obscureText: true,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -229,6 +236,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       if (checkBox == true) {
+                        _formKey.currentState.save();
+                        Provider.of<Users>(context, listen:false).put(
+                          User(
+                            name: _formData['name'],
+                            email: _formData['email'],
+                            password: _formData['password'],
+                          )
+                        );
                         Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                       }
                       else {
