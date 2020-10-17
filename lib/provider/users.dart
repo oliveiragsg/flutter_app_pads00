@@ -28,6 +28,7 @@ class Users with ChangeNotifier {
       id: id,
       name: user.name,
       email: user.email,
+      password: user.password,
       avatarURL: user.avatarURL,
     ));
     notifyListeners();

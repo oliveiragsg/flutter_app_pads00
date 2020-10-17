@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
-import 'screen0_home.dart';
-import 'screen1_piano.dart';
-import 'screen2_xylophone.dart';
-import 'screen3_drum.dart';
-import 'startScreen.dart';
-import 'loginScreen.dart';
-import 'signupScreen.dart';
+import 'package:flutter_app_pads00/views/loginScreen.dart';
+import 'package:flutter_app_pads00/views/screen1_piano.dart';
+import 'package:flutter_app_pads00/views/user_form.dart';
+import 'package:flutter_app_pads00/views/user_list.dart';
+import 'package:provider/provider.dart';
+import 'views/screen0_home.dart';
+import 'views/screen2_xylophone.dart';
+import 'views/screen3_drum.dart';
+import 'views/startScreen.dart';
+import 'views/signupScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,27 +19,28 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        AppRoutes.START : (_) => startScreen(),
-        AppRoutes.SIGNUP : (_) => signupScreen(),
-        AppRoutes.LOGIN : (_) => loginScreen(),
-        AppRoutes.HOME : (_) => Screen0(),
-        AppRoutes.PIANO : (_) => Screen1(),
-        AppRoutes.XYLOPHONE : (_) => Screen2(),
-        AppRoutes.DRUM : (_) => Screen3(),
-        // '/': (context) => startScreen(),
-        // '/signup': (context) => signupScreen(),
-        // '/login': (context) => loginScreen(),
-        // '/home': (context) => Screen0(),
-        // '/piano': (context) => Screen1(),
-        // '/xylophone': (context) => Screen2(),
-        // '/drum': (context) => Screen3(),
-
-      }
+    return ChangeNotifierProvider(
+      create: (ctx) => Users(),
+      child: MaterialApp(
+        title: 'Pads',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+          initialRoute: "/",
+          routes: {
+            AppRoutes.START : (_) => startScreen(),
+            AppRoutes.SIGNUP : (_) => signupScreen(),
+            AppRoutes.LOGIN : (_) => loginScreen(),
+            AppRoutes.HOME : (_) => Screen0(),
+            AppRoutes.PIANO : (_) => Screen1(),
+            AppRoutes.XYLOPHONE : (_) => Screen2(),
+            AppRoutes.DRUM : (_) => Screen3(),
+            AppRoutes.USER_FORM : (_) => UserForm(),
+            AppRoutes.USER_LIST : (_) => UserList(),
+          },
+      ),
     );
   }
-
 }
 

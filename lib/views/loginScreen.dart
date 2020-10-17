@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/startScreen.dart';
+import 'package:flutter_app_pads00/views/startScreen.dart';
 
 class loginScreen extends StatelessWidget {
-  final Email email;
+  final Email myEmail;
 
-  loginScreen({this.email});
+  loginScreen({this.myEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +40,8 @@ class loginScreen extends StatelessWidget {
                       color: Colors.black
                   ),
                   decoration: InputDecoration(
-                    icon: Icon(Icons.email, color: Colors.white),
-                    hintText: email.email,
+                    icon: Icon(Icons.email, color: Colors .white),
+                    hintText: myEmail.email,
                     hintStyle: TextStyle(
                       color: Colors.black,
                       fontSize: 25.0,

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/loginScreen.dart';
+import 'package:flutter_app_pads00/views/loginScreen.dart';
 
 class startScreen extends StatelessWidget {
   @override
@@ -106,7 +106,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       email.myEmail = myControllerEmail.text;
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(email: email,)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email)));
                     }
                     else {
                       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Há campos que precisam ser preenchidos para prosseguir.')));
@@ -128,7 +128,7 @@ class Email {
     return myEmail;
   }
 
-  void set myEmail(String controllerEmail) {
+   set myEmail(String controllerEmail) {
     email = controllerEmail;
   }
 
