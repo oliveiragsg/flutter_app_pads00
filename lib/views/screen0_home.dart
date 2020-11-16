@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/main.dart';
 
 
 
@@ -7,9 +8,11 @@ class Screen0 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Center(
+          child: Text('Home'),
+        ),
         backgroundColor: Colors.redAccent,
-
-        title: Text('Home'),
+        automaticallyImplyLeading: false,
       ),
       backgroundColor: Colors.pink,
       body: Center(
@@ -44,6 +47,20 @@ class Screen0 extends StatelessWidget {
                   Navigator.pushNamed(context, '/user_list');
                 },
               ),
+              RaisedButton(
+                color: Colors.red,
+                child: Text('Profile'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/profile');
+                },
+              ),
+              RaisedButton(
+                color: Colors.red,
+                child: Text('BotNavBar'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/botnavbar');
+                },
+              ),
               SizedBox(
                 width: 500,
                 height: 500,
@@ -51,11 +68,12 @@ class Screen0 extends StatelessWidget {
                 width: 600,
                 height: 240,
                 fit: BoxFit.contain),
-              )
-          ],
+              ),
+            ],
           ),
         )
       ),
     );
   }
 }
+

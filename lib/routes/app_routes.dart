@@ -8,4 +8,6 @@ class AppRoutes {
   static const DRUM = "/drum";
   static const USER_FORM = "/user_form";
   static const USER_LIST = "/user_list";
+  static const PROFILE = "/profile";
+  static const BOTNAVBAR = "/botnavbar";
 }

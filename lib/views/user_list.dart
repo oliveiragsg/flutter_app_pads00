@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/components/user_tile.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
@@ -12,22 +13,18 @@ class UserList extends StatelessWidget {
 
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Lista de Usuários'),
-        // actions: <Widget>[
-        //   IconButton(
-        //   icon: Icon(Icons.add),
-        //   color: Colors.yellow,
-        //   onPressed: () {
-        //     Navigator.of(context).pushNamed(AppRoutes.USER_FORM);
-        //   },
-        //   ),
-        // ],
-      ),
-    body: ListView.builder(
+        appBar: AppBar(
+          title: Center(
+            child: Text('Lista de Usuários'),
+          ),
+          backgroundColor: Colors.redAccent,
+          automaticallyImplyLeading: false,
+        ),
+     body: ListView.builder(
       itemCount: users.count,
       itemBuilder: (ctx, i) => UserTile(users.byIndex(i)),
       ),
+      backgroundColor: Colors.pink,
     );
   }
 }

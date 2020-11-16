@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
+import 'package:flutter_app_pads00/views/bottomNavBar.dart';
 import 'package:flutter_app_pads00/views/loginScreen.dart';
+import 'package:flutter_app_pads00/views/profileScreen.dart';
 import 'package:flutter_app_pads00/views/screen1_piano.dart';
 import 'package:flutter_app_pads00/views/user_form.dart';
 import 'package:flutter_app_pads00/views/user_list.dart';
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-          initialRoute: "/",
+        initialRoute: "/",
           routes: {
             AppRoutes.START : (_) => startScreen(),
             AppRoutes.SIGNUP : (_) => signupScreen(),
@@ -38,9 +40,31 @@ class MyApp extends StatelessWidget {
             AppRoutes.DRUM : (_) => Screen3(),
             AppRoutes.USER_FORM : (_) => UserForm(),
             AppRoutes.USER_LIST : (_) => UserList(),
+            AppRoutes.PROFILE : (_) => profileScreen(),
+            AppRoutes.BOTNAVBAR : (_) => MyStatefulWidget(),
           },
       ),
     );
   }
+}
+
+
+
+
+Widget bottomNavigationBar() {
+  return BottomNavigationBar(
+    backgroundColor: Colors.pinkAccent,
+    items: const <BottomNavigationBarItem>[
+      BottomNavigationBarItem(icon: Icon(Icons.favorite),
+        label: 'Favorite',
+      ),
+      BottomNavigationBarItem(icon: Icon(Icons.home),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(icon: Icon(Icons.person),
+        label: 'Profile',
+      ),
+    ],
+  );
 }
 

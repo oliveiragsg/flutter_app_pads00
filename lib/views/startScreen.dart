@@ -104,10 +104,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                 RaisedButton(
                   color: Colors.red,
                   child: Text('Next'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState.validate()) {
                       email.email = myControllerEmail.text;
-                      if(Users().byEmail(email.email) != null) {
+                      if(await Users().byEmail(email.email) != null) {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email)));
                       }
                       else {
