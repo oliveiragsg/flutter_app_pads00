@@ -22,7 +22,15 @@ class UserList extends StatelessWidget {
         ),
      body: ListView.builder(
       itemCount: users.count,
-      itemBuilder: (ctx, i) => UserTile(users.byIndex(i)),
+      //shrinkWrap: true,
+      scrollDirection: Axis.horizontal,
+      //itemBuilder: (ctx, i) => UserTile(users.byIndex(i)),
+       itemBuilder: (ctx, i)  {
+         return Container(
+           margin: const EdgeInsets.symmetric(horizontal: 50.0),
+           child: UserTile(users.byIndex(i)),
+         );
+       },
       ),
       backgroundColor: Colors.pink,
     );
