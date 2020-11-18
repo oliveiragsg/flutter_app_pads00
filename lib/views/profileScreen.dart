@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
+import 'package:flutter_app_pads00/provider/users.dart';
+import 'package:flutter_app_pads00/routes/app_routes.dart';
+import 'package:provider/provider.dart';
 
 class profileScreen extends StatefulWidget {
+
 
 
   @override
@@ -11,6 +15,7 @@ class profileScreen extends StatefulWidget {
 
 class _profileScreenState extends State<profileScreen> {
 
+
   final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
       ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
       : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), minRadius: 100,);
@@ -18,6 +23,8 @@ class _profileScreenState extends State<profileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // A página so atualiza quando eu coloco o Provider. O provider tem o ChangeWithNotifier. Porém eu ainda não entendi completamente, porque eu não uso o Users diretamente aqui.
+    final Users users = Provider.of(context);
 
     return Scaffold(
       backgroundColor: Colors.pink,
@@ -51,7 +58,7 @@ class _profileScreenState extends State<profileScreen> {
                   color: Colors.red,
                   child: Text('Editar Perfil'),
                   onPressed: () {
-                    print("Ir para a página de Edição de Perfil");
+                    Navigator.of(context).pushNamed(AppRoutes.USER_FORM, arguments: myUser);
                   },
                 ),
               ),

@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
@@ -11,7 +13,6 @@ import 'package:flutter_app_pads00/views/user_list.dart';
 /// This is the stateful widget that the main application instantiates.
 class MyStatefulWidget extends StatefulWidget {
 
-
   MyStatefulWidget({Key key}) : super(key: key);
 
   @override
@@ -21,7 +22,7 @@ class MyStatefulWidget extends StatefulWidget {
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
-  int _selectedIndex = 1;
+  int selectedIndex = 1;
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   List<Widget> _widgetOptions = <Widget>[
@@ -32,15 +33,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
-
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _widgetOptions.elementAt(selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -58,7 +60,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           ),
         ],
         backgroundColor: Colors.redAccent,
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         unselectedItemColor: Colors.black45,
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
