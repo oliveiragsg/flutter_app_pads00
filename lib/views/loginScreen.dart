@@ -7,15 +7,15 @@ import 'package:flutter_app_pads00/views/startScreen.dart';
 
 class loginScreen extends StatelessWidget {
   final Email myEmail;
-  final User myUserLogin;
+  final User localUser;
 
-  loginScreen({this.myEmail, this.myUserLogin});
+  loginScreen({this.myEmail, this.localUser});
 
 
   @override
   Widget build(BuildContext context) {
 
-    myUser = myUserLogin;
+    myUser = localUser;
 
     final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
         ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)

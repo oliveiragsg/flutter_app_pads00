@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
+import 'package:flutter_app_pads00/models/user.dart';
 
 class profileScreen extends StatefulWidget {
 
@@ -9,6 +10,7 @@ class profileScreen extends StatefulWidget {
 }
 
 class _profileScreenState extends State<profileScreen> {
+
   final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
       ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
       : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), minRadius: 100,);
@@ -16,6 +18,7 @@ class _profileScreenState extends State<profileScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.pink,
       appBar: AppBar(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/views/loginScreen.dart';
+import 'package:flutter_app_pads00/views/profileScreen.dart';
 
 class startScreen extends StatelessWidget {
   @override
@@ -113,7 +114,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                       email.email = myControllerEmail.text;
                       if(await Users().byEmail(email.email) != null) {
                         user = await Users().byEmail(email.email);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email, myUserLogin: user)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email, localUser: user)));
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => profileScreen()));
                       }
                       else {
                         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Esta conta não existe! Email: ${email.email}')));

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
+import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/views/profileScreen.dart';
 import 'package:flutter_app_pads00/views/screen0_home.dart';
 import 'package:flutter_app_pads00/views/user_list.dart';
@@ -18,6 +20,7 @@ class MyStatefulWidget extends StatefulWidget {
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+
   int _selectedIndex = 1;
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
