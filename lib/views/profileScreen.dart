@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
+import 'package:flutter_app_pads00/models/user.dart';
 
 class profileScreen extends StatefulWidget {
+
   @override
   _profileScreenState createState() => _profileScreenState();
 }
 
 class _profileScreenState extends State<profileScreen> {
+  final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
+      ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
+      : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), minRadius: 100,);
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,16 +32,10 @@ class _profileScreenState extends State<profileScreen> {
               //Profile Picture
               Padding(
                 padding: const EdgeInsets.only(left:75.0, top: 50.0, right: 75.0, bottom: 10.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(500.0),
-                  child: Image.asset('assets/images/profilePic.jpg',
-                  width: 600.0,
-                  height: 240.0,
-                  fit: BoxFit.fill),
-                ),
+                child: avatar,
               ),
               // Edit Profile Button
-              Text('Nome', //Name
+              Text(myUser.name, //Name
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 30.0,

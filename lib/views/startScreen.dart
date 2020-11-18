@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/views/loginScreen.dart';
 
@@ -63,6 +64,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 
   Widget build(BuildContext context) {
+
+    User user;
+
     return Form(
         key: _formKey,
         child: Column(
@@ -108,7 +112,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                     if (_formKey.currentState.validate()) {
                       email.email = myControllerEmail.text;
                       if(await Users().byEmail(email.email) != null) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email)));
+                        user = await Users().byEmail(email.email);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email, myUser: user)));
                       }
                       else {
                         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Esta conta não existe! Email: ${email.email}')));

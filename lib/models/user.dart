@@ -6,6 +6,7 @@ class User {
   final String email;
   final String password;
   final String avatarURL;
+  final List<User> likes;
 
   const User({
     this.id,
@@ -13,6 +14,7 @@ class User {
     @required this.email,
     @required this.password,
     this.avatarURL,
+    this.likes,
   });
 
 

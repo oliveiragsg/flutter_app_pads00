@@ -10,8 +10,8 @@ class UserTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final avatar = user.avatarURL==null || user.avatarURL.isEmpty
-        ? CircleAvatar(child: Icon(Icons.person))
-          : CircleAvatar(backgroundImage: NetworkImage(user.avatarURL));
+        ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
+          : CircleAvatar(backgroundImage: NetworkImage(user.avatarURL, scale: 100), minRadius: 100,);
 
     return Row(
       children: [
@@ -34,15 +34,12 @@ class UserTile extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(500.0),
-                      child: Image.asset('assets/images/profilePic.jpg',
-                          width: 240.0,
-                          height: 240.0,
-                          fit: BoxFit.cover),
+                      child: avatar
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: Text('Nome', //Name
+                    child: Text(user.name, //Name
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 30.0,

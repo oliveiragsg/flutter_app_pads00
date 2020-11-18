@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/components/user_tile.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
-import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 class UserList extends StatelessWidget {
@@ -22,9 +21,7 @@ class UserList extends StatelessWidget {
         ),
      body: ListView.builder(
       itemCount: users.count,
-      //shrinkWrap: true,
       scrollDirection: Axis.horizontal,
-      //itemBuilder: (ctx, i) => UserTile(users.byIndex(i)),
        itemBuilder: (ctx, i)  {
          return Container(
            margin: const EdgeInsets.symmetric(horizontal: 50.0),

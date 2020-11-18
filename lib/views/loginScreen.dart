@@ -1,14 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/models/user.dart';
+import 'package:flutter_app_pads00/provider/users.dart';
+import 'package:flutter_app_pads00/views/bottomNavBar.dart';
 import 'package:flutter_app_pads00/views/startScreen.dart';
+import 'package:provider/provider.dart';
 
 class loginScreen extends StatelessWidget {
   final Email myEmail;
+  final User myUser;
 
-  loginScreen({this.myEmail});
+  loginScreen({this.myEmail, this.myUser});
+
 
   @override
   Widget build(BuildContext context) {
+
+    final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
+        ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
+        : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), minRadius: 100,);
+
     return Scaffold(
       backgroundColor: Colors.pink,
       appBar: AppBar(
@@ -21,13 +32,7 @@ class loginScreen extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left:10.0, top: 50.0, right: 10.0, bottom: 50.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(500.0),
-                  child: Image.asset('assets/images/profilePic.jpg',
-                      width: 300,
-                      height: 300,
-                      fit: BoxFit.fill),
-                ),
+                child: avatar,
               ),
               Text('E-mail'),
               Padding(
@@ -41,7 +46,7 @@ class loginScreen extends StatelessWidget {
                   ),
                   decoration: InputDecoration(
                     icon: Icon(Icons.email, color: Colors .white),
-                    hintText: myEmail.email,
+                    hintText: myUser.email,
                     hintStyle: TextStyle(
                       color: Colors.black,
                       fontSize: 25.0,
@@ -62,6 +67,7 @@ class loginScreen extends StatelessWidget {
 }
 
 
+
 class MyCustomForm extends StatefulWidget {
   @override
   MyCustomFormState createState() {
@@ -72,8 +78,10 @@ class MyCustomForm extends StatefulWidget {
 class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
 
+
   @override
   Widget build(BuildContext context) {
+
     return Form(
         key: _formKey,
         child: Column(
@@ -115,7 +123,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                   child: Text('Enter'),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+                      //Navigator.pushNamedAndRemoveUntil(context, '/botnavbar', (_) => false);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyStatefulWidget(myUser: loginScreen().myUser)));
                     }
                     else {
                       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Há campos que precisam ser preenchidos para prosseguir.')));
