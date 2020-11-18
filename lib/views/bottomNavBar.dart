@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/views/profileScreen.dart';
 import 'package:flutter_app_pads00/views/screen0_home.dart';
-import 'package:flutter_app_pads00/views/startScreen.dart';
 import 'package:flutter_app_pads00/views/user_list.dart';
 
 
@@ -10,9 +8,9 @@ import 'package:flutter_app_pads00/views/user_list.dart';
 /// EXEMPLO PEGO DO SITE: https://api.flutter.dev/flutter/material/BottomNavigationBar-class.html
 /// This is the stateful widget that the main application instantiates.
 class MyStatefulWidget extends StatefulWidget {
-  final User myUser;
 
-  MyStatefulWidget({Key key, this.myUser}) : super(key: key);
+
+  MyStatefulWidget({Key key}) : super(key: key);
 
   @override
   _MyStatefulWidgetState createState() => _MyStatefulWidgetState();

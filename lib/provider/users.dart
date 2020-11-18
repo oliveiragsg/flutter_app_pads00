@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/data/users_teste.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:http/http.dart' as http;
 
 class Users with ChangeNotifier {
   static const _baseURL = 'https://flutter-app-pads00.firebaseio.com/';
   List<User> loadedUsers = [];
+
 
   Users() {
     fetchUsers();

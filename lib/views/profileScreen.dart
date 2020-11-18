@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
-import 'package:flutter_app_pads00/models/user.dart';
 
 class profileScreen extends StatefulWidget {
+
 
   @override
   _profileScreenState createState() => _profileScreenState();

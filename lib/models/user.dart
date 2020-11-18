@@ -16,6 +16,4 @@ class User {
     this.avatarURL,
     this.likes,
   });
-
-
 }

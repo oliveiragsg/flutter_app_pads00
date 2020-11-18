@@ -113,7 +113,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       email.email = myControllerEmail.text;
                       if(await Users().byEmail(email.email) != null) {
                         user = await Users().byEmail(email.email);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email, myUser: user)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => loginScreen(myEmail: email, myUserLogin: user)));
                       }
                       else {
                         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Esta conta não existe! Email: ${email.email}')));

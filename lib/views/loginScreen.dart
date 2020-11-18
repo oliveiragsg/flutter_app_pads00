@@ -1,20 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
-import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/views/bottomNavBar.dart';
 import 'package:flutter_app_pads00/views/startScreen.dart';
-import 'package:provider/provider.dart';
 
 class loginScreen extends StatelessWidget {
   final Email myEmail;
-  final User myUser;
+  final User myUserLogin;
 
-  loginScreen({this.myEmail, this.myUser});
+  loginScreen({this.myEmail, this.myUserLogin});
 
 
   @override
   Widget build(BuildContext context) {
+
+    myUser = myUserLogin;
 
     final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
         ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
@@ -124,7 +125,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       //Navigator.pushNamedAndRemoveUntil(context, '/botnavbar', (_) => false);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyStatefulWidget(myUser: loginScreen().myUser)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyStatefulWidget()));
                     }
                     else {
                       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Há campos que precisam ser preenchidos para prosseguir.')));
