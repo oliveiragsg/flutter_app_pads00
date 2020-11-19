@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,6 +27,7 @@ class Users with ChangeNotifier {
           id: userID,
           name: userData['name'],
           email: userData['email'],
+          password: userData['password'],
           avatarURL: userData['avatarURL'],
         ),
       );
@@ -98,4 +100,15 @@ class Users with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void like(User myOwnUser, User likedUser) {
+    myOwnUser.likes.add(likedUser);
+    print('////////////////////////////');
+    print("usuario: ");
+    print(myOwnUser.name);
+    print('curtiu: ');
+    print(likedUser.name);
+    print('////////////////////////////');
+  }
+
 }

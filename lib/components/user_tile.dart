@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
+import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:like_button/like_button.dart';
 
 class UserTile extends StatelessWidget {
@@ -86,40 +88,46 @@ class UserTile extends StatelessWidget {
                           onLikeButtonTapped,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 90),
-                          child: LikeButton(
-                            size: 30.0,
-                            circleColor:
-                            CircleColor(start: Color(0xff00ddff), end: Color(0xff0099cc)),
-                            bubblesColor: BubblesColor(
-                              dotPrimaryColor: Color(0xff33b5e5),
-                              dotSecondaryColor: Color(0xff0099cc),
+                          padding: const EdgeInsets.only(left: 80),
+                          child: IconButton(
+                            iconSize: 60.0,
+                            onPressed: () {
+                              like(myUser, user);
+                            },
+                            icon: LikeButton(
+                              size: 10.0,
+                              circleColor:
+                              CircleColor(start: Color(0xff00ddff), end: Color(0xff0099cc)),
+                              bubblesColor: BubblesColor(
+                                dotPrimaryColor: Color(0xff33b5e5),
+                                dotSecondaryColor: Color(0xff0099cc),
+                              ),
+                              likeBuilder: (bool isLiked) {
+                                return Icon(
+                                  Icons.favorite,
+                                  color: isLiked ? Colors.redAccent : Colors.pinkAccent,
+                                  size: 30.0,
+                                );
+                              },
+                              likeCount: 0,
+                              countBuilder: (int count, bool isLiked, String text) {
+                                var color = isLiked ? Colors.deepPurpleAccent : Colors.grey;
+                                Widget result;
+                                if (count == 0) {
+                                  result = Text(
+                                    "Ignore",
+                                    style: TextStyle(color: color),
+                                  );
+                                } else
+                                  result = Text(
+                                    text,
+                                    style: TextStyle(color: color),
+                                  );
+                                return result;
+                              },
+                              onTap:
+                              onLikeButtonTapped,
                             ),
-                            likeBuilder: (bool isLiked) {
-                              return Icon(
-                                Icons.favorite,
-                                color: isLiked ? Colors.red : Colors.pinkAccent,
-                                size: 30.0,
-                              );
-                            },
-                            likeCount: 0,
-                            countBuilder: (int count, bool isLiked, String text) {
-                              var color = isLiked ? Colors.deepPurpleAccent : Colors.grey;
-                              Widget result;
-                              if (count == 0) {
-                                result = Text(
-                                  "love",
-                                  style: TextStyle(color: color),
-                                );
-                              } else
-                                result = Text(
-                                  text,
-                                  style: TextStyle(color: color),
-                                );
-                              return result;
-                            },
-                            onTap:
-                            onLikeButtonTapped,
                           ),
                         ),
                       ],
@@ -138,3 +146,8 @@ class UserTile extends StatelessWidget {
 Future<bool> onLikeButtonTapped(bool isLiked) async{
   return !isLiked;
 }
+
+like(User myOwnUser, User likedUser) {
+  Users().like(myOwnUser, likedUser);
+}
+
