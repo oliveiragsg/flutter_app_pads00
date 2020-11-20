@@ -86,6 +86,36 @@ class _profileScreenState extends State<profileScreen> {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left:0.0, top: 200.0, right: 0.0, bottom: 10.0),
+                child: RaisedButton(
+                  color: Colors.red,
+                  child: Text('Sair'),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text('Sair'),
+                          content: Text('Tem certeza disso?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Sim'),
+                              onPressed: () {
+                                myUser = User(name: null, email: null, password: null);
+                                Navigator.of(context).pushNamed(AppRoutes.START);
+                              },
+                            ),
+                            FlatButton(
+                              child: Text('Não'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ));
+                  },
+                ),
+              ),
             ],
           ),
         ),

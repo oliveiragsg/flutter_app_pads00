@@ -7,7 +7,6 @@ class User {
   final String password;
   final String avatarURL;
   final List<User> likes = [];
-  final List<String> teste = [];
 
   User({
     this.id,

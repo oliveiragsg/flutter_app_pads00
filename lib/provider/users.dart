@@ -73,6 +73,7 @@ class Users with ChangeNotifier {
           'name': user.name,
           'email': user.email,
           'avatarURL': user.avatarURL,
+          'password': user.password,
         }),
       );
     } else {
@@ -83,6 +84,7 @@ class Users with ChangeNotifier {
           'name': user.name,
           'email': user.email,
           'avatarURL': user.avatarURL,
+          'password': user.password,
         }),
       );
     }
@@ -101,8 +103,9 @@ class Users with ChangeNotifier {
     }
   }
 
-  void like(User myOwnUser, User likedUser) {
+  void like(User myOwnUser, User likedUser) async {
     int totalSize = myOwnUser.likes.length;
+
     for (int count = 0; count < totalSize; count++) {
       if (myOwnUser.likes.elementAt(count).id == likedUser.id) {
         print("Este usuario ja foi curtido!!");
@@ -111,6 +114,16 @@ class Users with ChangeNotifier {
     }
     print("usuario curtido com sucesso!!");
     myOwnUser.likes.add(likedUser);
+
+    await http.patch(
+      '$_baseURL/users/${myOwnUser.id}/likes/${likedUser.id}.json',
+      body: json.encode({
+        'name': likedUser.name,
+        'avatarURL': likedUser.avatarURL,
+      }),
+    );
+
+
   }
 
   User usersLikedByIndex(int i) {

@@ -84,9 +84,7 @@ class UserTile extends StatelessWidget {
                               );
                             return result;
                           },
-                          onTap: (isLiked) {
-                            return like(isLiked, myUser, user);
-                          },
+                          onTap: onLikeButtonTapped,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 80),
@@ -141,6 +139,7 @@ class UserTile extends StatelessWidget {
 
 //Padrão anterior do LikeButton, não usado!
 Future<bool> onLikeButtonTapped(bool isLiked) async{
+  print('Adicionar a função para descartar este usuário!!!');
   return !isLiked;
 }
 
