@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 class Users with ChangeNotifier {
   static const _baseURL = 'https://flutter-app-pads00.firebaseio.com/';
   List<User> loadedUsers = [];
+  List<User> likedUsers = [];
 
 
   Users() {
@@ -29,11 +30,13 @@ class Users with ChangeNotifier {
           email: userData['email'],
           password: userData['password'],
           avatarURL: userData['avatarURL'],
+          teste: userData['likes'],
         ),
       );
     });
     loadedUsers = downloadedUsers;
     notifyListeners();
+    usersLikedByIndex();
   }
 
   List<User> get all {
@@ -42,6 +45,16 @@ class Users with ChangeNotifier {
 
   int get count {
     return loadedUsers.length;
+  }
+
+  User byID(String id) {
+    int totalSize = loadedUsers.length;
+    for (int count = 0; count <totalSize; count++) {
+      if(loadedUsers.elementAt(count).id == id) {
+        return loadedUsers.elementAt(count);
+      }
+    }
+    return null;
   }
 
   User byIndex(int i) {
@@ -118,16 +131,49 @@ class Users with ChangeNotifier {
     await http.patch(
       '$_baseURL/users/${myOwnUser.id}/likes/${likedUser.id}.json',
       body: json.encode({
+        'userID': likedUser.id,
         'name': likedUser.name,
-        'avatarURL': likedUser.avatarURL,
+        'email': likedUser.email,
+        'password': likedUser.password,
       }),
     );
 
 
+    fetchUsers();
+
   }
 
-  User usersLikedByIndex(int i) {
-    return myUser.likes.elementAt(i);
+  Future<void> usersLikedByIndex() async {
+
+    final response = await http.get(
+        '$_baseURL/users/${myUser.id}/likes.json'
+    );
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    final List<User> downloadedUsers = [];
+    extractedData.forEach((userID, userData) {
+      downloadedUsers.add(
+        byID(userID),
+      );
+    });
+    likedUsers = downloadedUsers;
+    int totalUsers = downloadedUsers.length;
+    for (int count = 0; count < totalUsers; count++) {
+      myUser.likes.add(downloadedUsers[count]);
+    }
+
+    print('////////////////////////////////////////////////');
+    print('Quantidade de usuários curtidos:');
+    print(likedUsers.length);
+    print('Instancias: ');
+    print(likedUsers);
+    print('////////////////////////////////////////////////');
+    notifyListeners();
   }
+
+  User usersLiked(int i) {
+    return likedUsers.elementAt(i);
+  }
+
+
 
 }

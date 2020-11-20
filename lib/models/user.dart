@@ -7,6 +7,7 @@ class User {
   final String password;
   final String avatarURL;
   final List<User> likes = [];
+  Map<String, dynamic> teste;
 
   User({
     this.id,
@@ -14,5 +15,6 @@ class User {
     @required this.email,
     @required this.password,
     this.avatarURL,
+    this.teste,
   });
 }
