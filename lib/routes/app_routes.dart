@@ -10,4 +10,5 @@ class AppRoutes {
   static const USER_LIST = "/user_list";
   static const PROFILE = "/profile";
   static const BOTNAVBAR = "/botnavbar";
+  static const PARTNERS = "/partners";
 }

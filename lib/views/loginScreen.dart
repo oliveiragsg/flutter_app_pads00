@@ -20,7 +20,7 @@ class loginScreen extends StatelessWidget {
 
     final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
         ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
-        : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), minRadius: 100,);
+        : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
 
     return Scaffold(
       backgroundColor: Colors.pink,

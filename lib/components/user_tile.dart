@@ -13,7 +13,7 @@ class UserTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final avatar = user.avatarURL==null || user.avatarURL.isEmpty
         ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
-          : CircleAvatar(backgroundImage: NetworkImage(user.avatarURL, scale: 100), minRadius: 100,);
+          : CircleAvatar(backgroundImage: NetworkImage(user.avatarURL), maxRadius: 100,);
 
     return Row(
       children: [
@@ -84,52 +84,48 @@ class UserTile extends StatelessWidget {
                               );
                             return result;
                           },
-                          onTap:
-                          onLikeButtonTapped,
+                          onTap: (isLiked) {
+                            return like(isLiked, myUser, user);
+                          },
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 80),
-                          child: IconButton(
-                            iconSize: 60.0,
-                            onPressed: () {
-                              like(myUser, user);
-                            },
-                            icon: LikeButton(
-                              size: 10.0,
-                              circleColor:
-                              CircleColor(start: Color(0xff00ddff), end: Color(0xff0099cc)),
-                              bubblesColor: BubblesColor(
-                                dotPrimaryColor: Color(0xff33b5e5),
-                                dotSecondaryColor: Color(0xff0099cc),
-                              ),
-                              likeBuilder: (bool isLiked) {
-                                return Icon(
-                                  Icons.favorite,
-                                  color: isLiked ? Colors.redAccent : Colors.pinkAccent,
-                                  size: 30.0,
-                                );
-                              },
-                              likeCount: 0,
-                              countBuilder: (int count, bool isLiked, String text) {
-                                var color = isLiked ? Colors.deepPurpleAccent : Colors.grey;
-                                Widget result;
-                                if (count == 0) {
-                                  result = Text(
-                                    "Ignore",
-                                    style: TextStyle(color: color),
-                                  );
-                                } else
-                                  result = Text(
-                                    text,
-                                    style: TextStyle(color: color),
-                                  );
-                                return result;
-                              },
-                              onTap:
-                              onLikeButtonTapped,
+                          child: LikeButton(
+                            size: 30.0,
+                            circleColor:
+                            CircleColor(start: Color(0xff00ddff), end: Color(0xff0099cc)),
+                            bubblesColor: BubblesColor(
+                              dotPrimaryColor: Color(0xff33b5e5),
+                              dotSecondaryColor: Color(0xff0099cc),
                             ),
+                            likeBuilder: (bool isLiked) {
+                              return Icon(
+                                Icons.favorite,
+                                color: isLiked ? Colors.redAccent : Colors.pinkAccent,
+                                size: 30.0,
+                              );
+                            },
+                            likeCount: 0,
+                            countBuilder: (int count, bool isLiked, String text) {
+                              var color = isLiked ? Colors.deepPurpleAccent : Colors.grey;
+                              Widget result;
+                              if (count == 0) {
+                                result = Text(
+                                  "Ignore",
+                                  style: TextStyle(color: color),
+                                );
+                              } else
+                                result = Text(
+                                  text,
+                                  style: TextStyle(color: color),
+                                );
+                              return result;
+                            },
+                            onTap: (isLiked) {
+                              return like(isLiked, myUser, user);
+                            },
                           ),
-                        ),
+                          ),
                       ],
                     ),
                   )
@@ -143,11 +139,15 @@ class UserTile extends StatelessWidget {
   }
 }
 
+//Padrão anterior do LikeButton, não usado!
 Future<bool> onLikeButtonTapped(bool isLiked) async{
   return !isLiked;
 }
 
-like(User myOwnUser, User likedUser) {
+
+//Pego e alterado do exemplo: https://stackoverflow.com/questions/61205574/flutter-like-button-on-tap-increment-the-value-in-the-server
+Future <bool> like(status, User myOwnUser, User likedUser) async {
   Users().like(myOwnUser, likedUser);
+  return Future.value(!status);
 }
 

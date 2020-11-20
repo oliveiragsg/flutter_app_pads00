@@ -102,13 +102,19 @@ class Users with ChangeNotifier {
   }
 
   void like(User myOwnUser, User likedUser) {
+    int totalSize = myOwnUser.likes.length;
+    for (int count = 0; count < totalSize; count++) {
+      if (myOwnUser.likes.elementAt(count).id == likedUser.id) {
+        print("Este usuario ja foi curtido!!");
+        return;
+      }
+    }
+    print("usuario curtido com sucesso!!");
     myOwnUser.likes.add(likedUser);
-    print('////////////////////////////');
-    print("usuario: ");
-    print(myOwnUser.name);
-    print('curtiu: ');
-    print(likedUser.name);
-    print('////////////////////////////');
+  }
+
+  User usersLikedByIndex(int i) {
+    return myUser.likes.elementAt(i);
   }
 
 }

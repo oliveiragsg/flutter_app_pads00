@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
+import 'package:flutter_app_pads00/views/partnersScreen.dart';
 import 'package:flutter_app_pads00/views/profileScreen.dart';
 import 'package:flutter_app_pads00/views/screen0_home.dart';
 import 'package:flutter_app_pads00/views/user_list.dart';
@@ -29,6 +30,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     profileScreen(),
     Screen0(),
     UserList(),
+    PartnersScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -58,7 +60,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             icon: Icon(Icons.favorite),
             label: 'Likes',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Partners',
+          ),
         ],
+        iconSize: 30,
+        type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.redAccent,
         currentIndex: selectedIndex,
         unselectedItemColor: Colors.black45,
