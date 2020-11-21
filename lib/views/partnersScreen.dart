@@ -10,6 +10,7 @@ class PartnersScreen extends StatelessWidget {
 
   /////////////////////////////////////////////
   ///Descobrir como fazer para o Build esperar o carregamento dos usuários antes de carreagr a página.////////////
+  /// Essa página tem que ser Stateful provavelmente//
   /////////////////////////////////////////////
 
 
