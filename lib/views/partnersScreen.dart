@@ -8,6 +8,11 @@ import 'package:provider/provider.dart';
 
 class PartnersScreen extends StatelessWidget {
 
+  /////////////////////////////////////////////
+  ///Descobrir como fazer para o Build esperar o carregamento dos usuários antes de carreagr a página.////////////
+  /////////////////////////////////////////////
+
+
   @override
   Widget build(BuildContext context) {
     final Users users = Provider.of(context);

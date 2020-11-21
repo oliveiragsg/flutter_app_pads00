@@ -29,13 +29,10 @@ class Users with ChangeNotifier {
           email: userData['email'],
           password: userData['password'],
           avatarURL: userData['avatarURL'],
-          teste: userData['likes'],
         ),
       );
     });
     loadedUsers = downloadedUsers;
-
-
 
     final response2 = await http.get(
         '$_baseURL/users/${myUser.id}/likes.json'
@@ -67,10 +64,6 @@ class Users with ChangeNotifier {
     else {
       return;
     }
-
-
-
-
 
     notifyListeners();
   }
@@ -177,10 +170,59 @@ class Users with ChangeNotifier {
       }),
     );
 
+    if(isMatch(myUser, likedUser) == true) {
+      await http.patch(
+        '$_baseURL/users/${myOwnUser.id}/matchs/${likedUser.id}.json',
+        body: json.encode({
+          'userID': likedUser.id,
+          'name': likedUser.name,
+          'email': likedUser.email,
+          'password': likedUser.password,
+        }),
+      );
+      await http.patch(
+        '$_baseURL/users/${likedUser.id}/matchs/${myOwnUser.id}.json',
+        body: json.encode({
+          'userID': myOwnUser.id,
+          'name': myOwnUser.name,
+          'email': myOwnUser.email,
+          'password': myOwnUser.password,
+        }),
+      );
+    }
+
     notifyListeners();
     fetchUsers();
 
   }
+
+  bool isMatch(User myUser, User userLiked) {
+    //Provavel que tenha que criar um if else para caso não há nenhum like ainda.
+    ////////////////////////////////////////////////////////////////////////////
+    //// O userLiked está sempre vindo com o likes.length em 0, porque ele ta sendo pego do downloadedUsers, e la, em nenhum momento o FetchUsers baixa os likes dele.
+    //// Para arruamar isso, você vai poder criar uma response = await http.get do '$_baseURL/users/${userLiked.id}/likes.json' e verificar dai se o response.statusCode == 200 (Status ok)
+    //// Se não, apenas retorne, se sim, então você vai criar outra response agora e verificar '$_baseURL/users/${userLiked.id}/likes/${myUser.id}.json' . Isso quer dizer, você vai verificar
+    //// dentro do próprio Firebase se dentro dos likes daquele usuário existe um like que de match no seu. Se sim, será match!!
+    ////////////////////////////////////////////////////////////////////////////
+    int myUserTotalLikes = myUser.likes.length;
+    int userLikedTotalLikes = userLiked.likes.length;
+    print('////////////////////////////////////////////////////////////////');
+    print('Total de likes do myUser:');
+    print(myUserTotalLikes);
+    print('Total de likes do userLiked');
+    print(userLikedTotalLikes);
+    print('////////////////////////////////////////////////////////////////');
+    for (int count1 = 0; count1 < myUserTotalLikes; count1++) {
+      for (int count2 = 0; count2 < userLikedTotalLikes; count2++) {
+        if(myUser.likes.elementAt(count1) == userLiked.likes.elementAt(count2)) {
+          return true;
+        }
+        print('não foi match!!!!');
+      }
+    }
+    return false;
+  }
+
 
   User usersLiked(int i) {
     return myUser.likes.elementAt(i);
