@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
+import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'package:flutter_app_pads00/views/bottomNavBar.dart';
 import 'package:flutter_app_pads00/views/startScreen.dart';
@@ -125,8 +126,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   child: Text('Enter'),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      //Navigator.pushNamedAndRemoveUntil(context, '/botnavbar', (_) => false);
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => MyStatefulWidget()));
+                      Users().fetchUsers();
                       Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
                     }
                     else {

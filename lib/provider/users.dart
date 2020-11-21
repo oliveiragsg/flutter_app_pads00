@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 class Users with ChangeNotifier {
   static const _baseURL = 'https://flutter-app-pads00.firebaseio.com/';
   List<User> loadedUsers = [];
-  List<User> likedUsers = [];
 
 
   Users() {
@@ -35,8 +34,45 @@ class Users with ChangeNotifier {
       );
     });
     loadedUsers = downloadedUsers;
+
+
+
+    final response2 = await http.get(
+        '$_baseURL/users/${myUser.id}/likes.json'
+    );
+    print(response2.statusCode);
+    if (response2.statusCode == 200) {
+      final extractedData2 = json.decode(response2.body) as Map<String, dynamic>;
+      final List<User> listUsers = [];
+      if(extractedData2 == null) {
+        return;
+      }
+      else {
+        extractedData2.forEach((userID, userData) {
+          listUsers.add(
+            byID(userID),
+          );
+        });
+        print('MyUser.likes antes do clear: ');
+        print(myUser.likes);
+        myUser.likes.clear();
+        print('MyUser.likes depois do clear: ');
+        print(myUser.likes);
+        int totalUsers = listUsers.length;
+        for (int count = 0; count < totalUsers; count++) {
+          myUser.likes.add(listUsers.elementAt(count));
+        }
+      }
+    }
+    else {
+      return;
+    }
+
+
+
+
+
     notifyListeners();
-    usersLikedByIndex();
   }
 
   List<User> get all {
@@ -117,6 +153,9 @@ class Users with ChangeNotifier {
   }
 
   void like(User myOwnUser, User likedUser) async {
+    print('ta chegando até aqui');
+    print(myOwnUser.likes);
+    print(myOwnUser.likes.length);
     int totalSize = myOwnUser.likes.length;
 
     for (int count = 0; count < totalSize; count++) {
@@ -126,7 +165,7 @@ class Users with ChangeNotifier {
       }
     }
     print("usuario curtido com sucesso!!");
-    myOwnUser.likes.add(likedUser);
+    //myOwnUser.likes.add(likedUser);
 
     await http.patch(
       '$_baseURL/users/${myOwnUser.id}/likes/${likedUser.id}.json',
@@ -138,42 +177,18 @@ class Users with ChangeNotifier {
       }),
     );
 
-
+    notifyListeners();
     fetchUsers();
 
   }
 
-  Future<void> usersLikedByIndex() async {
-
-    final response = await http.get(
-        '$_baseURL/users/${myUser.id}/likes.json'
-    );
-    final extractedData = json.decode(response.body) as Map<String, dynamic>;
-    final List<User> downloadedUsers = [];
-    extractedData.forEach((userID, userData) {
-      downloadedUsers.add(
-        byID(userID),
-      );
-    });
-    likedUsers = downloadedUsers;
-    int totalUsers = downloadedUsers.length;
-    for (int count = 0; count < totalUsers; count++) {
-      myUser.likes.add(downloadedUsers[count]);
-    }
-
-    print('////////////////////////////////////////////////');
-    print('Quantidade de usuários curtidos:');
-    print(likedUsers.length);
-    print('Instancias: ');
-    print(likedUsers);
-    print('////////////////////////////////////////////////');
-    notifyListeners();
-  }
-
   User usersLiked(int i) {
-    return likedUsers.elementAt(i);
+    return myUser.likes.elementAt(i);
   }
 
+  int get usersLikedCount {
+    return myUser.likes.length;
+  }
 
 
 }

@@ -12,8 +12,6 @@ class PartnersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Users users = Provider.of(context);
 
-
-
   return (myUser.likes?.isEmpty ?? true) ? Scaffold(
       backgroundColor: Colors.pink,
       appBar: AppBar(
@@ -32,12 +30,12 @@ class PartnersScreen extends StatelessWidget {
           backgroundColor: Colors.redAccent,
           automaticallyImplyLeading: false,
         ),
-        body: ListView.builder(
-          itemCount: myUser.likes.length,
+        body: ListView.builder (
+          itemCount: users.usersLikedCount,
           itemBuilder: (ctx, i) {
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              child: PartnerTile(myUser.likes.elementAt(i)));
+              child: PartnerTile(users.usersLiked(i)));
           }
         ),
     );
