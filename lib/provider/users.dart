@@ -60,6 +60,32 @@ class Users with ChangeNotifier {
       return;
     }
 
+    final response3 = await http.get(
+        '$_baseURL/users/${myUser.id}/matchs.json'
+    );
+    if (response3.statusCode == 200) {
+      final extractedData3 = json.decode(response3.body) as Map<String, dynamic>;
+      final List<User> listMatchs = [];
+      if(extractedData3 == null) {
+        return;
+      }
+      else {
+        extractedData3.forEach((userID, userData) {
+          listMatchs.add(
+            byID(userID),
+          );
+        });
+        myUser.matchs.clear();
+        int totalMatchs = listMatchs.length;
+        for (int count = 0; count < totalMatchs; count++) {
+          myUser.matchs.add(listMatchs.elementAt(count));
+        }
+      }
+    }
+    else {
+      return;
+    }
+
     notifyListeners();
   }
 
@@ -101,7 +127,6 @@ class Users with ChangeNotifier {
       return;
     }
     if(user.id != null && user.id.trim().isNotEmpty) {
-      print("http.patch");
       await http.patch(
         '$_baseURL/users/${user.id}.json',
         body: json.encode({
@@ -112,7 +137,6 @@ class Users with ChangeNotifier {
         }),
       );
     } else {
-      print('http.post');
       final response = await http.post(
         '$_baseURL/users.json',
         body: json.encode({
@@ -129,7 +153,6 @@ class Users with ChangeNotifier {
 
   void remove(User user) {
     if(user != null && user.id != null) {
-      print("http.delete");
       http.delete(
         '$_baseURL/users/${user.id}.json',
       );
@@ -158,6 +181,8 @@ class Users with ChangeNotifier {
     );
 
     if(await isMatch(myUser, likedUser) == true) {
+      print('--------------');
+      print('Deu match!!!');
       await http.patch(
         '$_baseURL/users/${myOwnUser.id}/matchs/${likedUser.id}.json',
         body: json.encode({
@@ -178,33 +203,27 @@ class Users with ChangeNotifier {
       );
     }
 
-    notifyListeners();
     fetchUsers();
 
   }
 
-  Future<bool> isMatch(User myUser, User userLiked) async {
-    //Provavel que tenha que criar um if else para caso não há nenhum like ainda.
-    ////////////////////////////////////////////////////////////////////////////
-    //// O userLiked está sempre vindo com o likes.length em 0, porque ele ta sendo pego do downloadedUsers, e la, em nenhum momento o FetchUsers baixa os likes dele.
-    //// Para arruamar isso, você vai poder criar uma response = await http.get do '$_baseURL/users/${userLiked.id}/likes.json' e verificar dai se o response.statusCode == 200 (Status ok)
-    //// Se não, apenas retorne, se sim, então você vai criar outra response agora e verificar '$_baseURL/users/${userLiked.id}/likes/${myUser.id}.json' . Isso quer dizer, você vai verificar
-    //// dentro do próprio Firebase se dentro dos likes daquele usuário existe um like que de match no seu. Se sim, será match!!
-    ////////////////////////////////////////////////////////////////////////////
-
+  Future<bool> isMatch(User myUser, User likedUser) async {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Eu apenas consegui verificar se ja deu match verificando o response.body.lenght./////////////////////
+    //Porque sempre que ele estava vazio, ele tinha um lenght de 4.////////////////////////////////////////
+    //Outras formas não funcionaram, ex: IsEmpty, etc./////////////////////////////////////////////////////
+    //Eu tentei antes com o response.statuscode == 200, porém ele sempre dava 200, não importa a situação//
+    //Talvez eu tenha que revisar o FetchUsers que usa essa mesma função de statusCode/////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     final response = await http.get(
-        '$_baseURL/users/${userLiked.id}/likes.json'
+        '$_baseURL/users/${likedUser.id}/likes.json',
     );
-    print('status code de Response: ');
-    print(response.statusCode);
-    if (response.statusCode == 200) {
+    if (response.body.length != 4) {
       final response2 = await http.get(
-          '$_baseURL/users/${userLiked.id}/likes/${myUser.id}.json'
+          '$_baseURL/users/${likedUser.id}/likes/${myUser.id}.json'
       );
-      print('status code de Response2: ');
-      print(response2.statusCode);
-      if (response2.statusCode == 200) {
+      if (response2.body.length != 4) {
         return true;
       }
       else {
@@ -214,24 +233,6 @@ class Users with ChangeNotifier {
     else {
       return false;
     }
-
-    // int myUserTotalLikes = myUser.likes.length;
-    // int userLikedTotalLikes = userLiked.likes.length;
-    // print('////////////////////////////////////////////////////////////////');
-    // print('Total de likes do myUser:');
-    // print(myUserTotalLikes);
-    // print('Total de likes do userLiked');
-    // print(userLikedTotalLikes);
-    // print('////////////////////////////////////////////////////////////////');
-    // for (int count1 = 0; count1 < myUserTotalLikes; count1++) {
-    //   for (int count2 = 0; count2 < userLikedTotalLikes; count2++) {
-    //     if(myUser.likes.elementAt(count1) == userLiked.likes.elementAt(count2)) {
-    //       return true;
-    //     }
-    //     print('não foi match!!!!');
-    //   }
-    // }
-    // return false;
   }
 
 
@@ -239,8 +240,16 @@ class Users with ChangeNotifier {
     return myUser.likes.elementAt(i);
   }
 
+  User usersMatched(int i) {
+    return myUser.matchs.elementAt(i);
+  }
+
   int get usersLikedCount {
     return myUser.likes.length;
+  }
+
+  int get matchsCount {
+    return myUser.matchs.length;
   }
 
 

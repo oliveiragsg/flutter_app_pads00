@@ -18,7 +18,7 @@ class PartnersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Users users = Provider.of(context);
 
-  return (myUser.likes?.isEmpty ?? true) ? Scaffold(
+  return (myUser.matchs?.isEmpty ?? true) ? Scaffold(
       backgroundColor: Colors.pink,
       appBar: AppBar(
         title: Center(
@@ -37,11 +37,11 @@ class PartnersScreen extends StatelessWidget {
           automaticallyImplyLeading: false,
         ),
         body: ListView.builder (
-          itemCount: users.usersLikedCount,
+          itemCount: users.matchsCount,
           itemBuilder: (ctx, i) {
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              child: PartnerTile(users.usersLiked(i)));
+              child: PartnerTile(users.usersMatched(i)));
           }
         ),
     );
