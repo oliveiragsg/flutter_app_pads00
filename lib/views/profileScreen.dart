@@ -3,6 +3,7 @@ import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class profileScreen extends StatefulWidget {
@@ -43,11 +44,83 @@ class _profileScreenState extends State<profileScreen> {
               Padding(
                 padding: const EdgeInsets.only(left:75.0, top: 50.0, right: 75.0, bottom: 10.0),
                 child: FlatButton(
-                  child: avatar,
                   onPressed: () {
-                    Navigator.of(context).pushNamed(AppRoutes.CAMERA);
+                    showModalBottomSheet(context: context, builder: (BuildContext context) {
+                      return Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.pink,
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 4,
+                          )
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FlatButton(
+                              child: Row(
+                                children: [
+                                  Icon(Icons.photo_camera, size: 50.0,),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 15.0),
+                                    child: Text('Camera', style: TextStyle(
+                                      fontSize: 30.0,
+                                    ),),
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(AppRoutes.CAMERA);
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                              child: Divider(
+                                color: Colors.black,
+                                height: 20,
+                                thickness: 3,
+                                indent: 20,
+                                endIndent: 20,
+                              ),
+                            ),
+                            FlatButton(
+                              child: Row(
+                                children: [
+                                  Icon(Icons.photo, size: 50.0,),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 15.0),
+                                    child: Text('Galeria', style: TextStyle(
+                                      fontSize: 30.0,
+                                    ),),
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                print('Enviar para a galeria!!!');
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    });
                   },
-                )
+                  child: Stack(
+                    children: [
+                      avatar,
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 150.0, right: 15.0),
+                          child: CircleAvatar(
+                              child: Icon(Icons.photo_camera, color: Colors.black,),
+                                backgroundColor: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ),
               // Edit Profile Button
               Text(myUser.name, //Name
