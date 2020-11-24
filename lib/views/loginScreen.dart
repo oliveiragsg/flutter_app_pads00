@@ -27,7 +27,10 @@ class loginScreen extends StatelessWidget {
       backgroundColor: Colors.pink,
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
-        title: Text('Login'),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 100.0),
+          child: Text('Login'),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

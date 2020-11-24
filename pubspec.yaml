@@ -11,6 +11,9 @@ dependencies:
     sdk: flutter
   http:
   like_button: ^1.0.4
+  camera:
+  path_provider:
+  path:
 
 
   cupertino_icons: ^0.1.3
@@ -20,7 +23,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  http:
 
 
 flutter:

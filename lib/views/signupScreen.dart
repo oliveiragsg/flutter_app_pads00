@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
+import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 
@@ -19,7 +21,10 @@ class signupScreen extends StatefulWidget {
       backgroundColor: Colors.pink,
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
-        title: Text('Signup'),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 100.0),
+          child: Text('Signup'),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -233,7 +238,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 child: RaisedButton(
                   color: Colors.red,
                   child: Text('Signup'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState.validate()) {
                       if (checkBox == true) {
                         _formKey.currentState.save();
@@ -242,9 +247,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                             name: _formData['name'],
                             email: _formData['email'],
                             password: _formData['password'],
-                          )
+                          ),
                         );
-                        Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+                        myUser = await Users().byEmail(_formData['email']);
+                        Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
                       }
                       else {
                         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Concorde com os Termos de Adesão para Prosseguir')));

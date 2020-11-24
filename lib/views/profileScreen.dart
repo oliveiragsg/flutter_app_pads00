@@ -42,7 +42,12 @@ class _profileScreenState extends State<profileScreen> {
               //Profile Picture
               Padding(
                 padding: const EdgeInsets.only(left:75.0, top: 50.0, right: 75.0, bottom: 10.0),
-                child: avatar,
+                child: FlatButton(
+                  child: avatar,
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(AppRoutes.CAMERA);
+                  },
+                )
               ),
               // Edit Profile Button
               Text(myUser.name, //Name
