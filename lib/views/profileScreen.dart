@@ -98,7 +98,7 @@ class _profileScreenState extends State<profileScreen> {
                                 ],
                               ),
                               onPressed: () {
-                                print('Enviar para a galeria!!!');
+                                Navigator.of(context).pushNamed(AppRoutes.ALBUM);
                               },
                             ),
                           ],

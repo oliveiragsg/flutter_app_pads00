@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
+import 'package:flutter_app_pads00/views/albumScreen.dart';
 import 'package:flutter_app_pads00/views/bottomNavBar.dart';
 import 'package:flutter_app_pads00/views/cameraScreen.dart';
 import 'package:flutter_app_pads00/views/loginScreen.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
             AppRoutes.BOTNAVBAR : (_) => MyStatefulWidget(),
             AppRoutes.PARTNERS : (_) => PartnersScreen(),
             AppRoutes.CAMERA : (_) => TakePictureScreen(camera: camera),
+            AppRoutes.ALBUM : (_) => AlbumScreen(),
           },
       ),
     );

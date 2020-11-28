@@ -12,4 +12,5 @@ class AppRoutes {
   static const BOTNAVBAR = "/botnavbar";
   static const PARTNERS = "/partners";
   static const CAMERA = "/camera";
+  static const ALBUM = "/album";
 }
