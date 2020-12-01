@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class profileScreen extends StatefulWidget {
 
@@ -16,10 +18,30 @@ class profileScreen extends StatefulWidget {
 
 class _profileScreenState extends State<profileScreen> {
 
+  File image;
+  final picker = ImagePicker();
 
-  final avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
-      ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
-      : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        image = File(pickedFile.path);
+        myUser.avatar = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    }
+    );
+  }
+
+
+   var avatar = myUser.avatar==null
+       ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
+       : CircleAvatar(backgroundImage: FileImage(myUser.avatar), maxRadius: 100,);
+  // var avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
+  //     ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
+  //     : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
 
 
   @override
@@ -72,7 +94,8 @@ class _profileScreenState extends State<profileScreen> {
                                 ],
                               ),
                               onPressed: () {
-                                Navigator.of(context).pushNamed(AppRoutes.CAMERA);
+                                //Navigator.of(context).pushNamed(AppRoutes.CAMERA);
+                                getImage();
                               },
                             ),
                             Padding(

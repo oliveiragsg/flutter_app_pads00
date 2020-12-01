@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'dart:io';
 
 class User {
   final String id;
@@ -6,6 +7,7 @@ class User {
   final String email;
   final String password;
   final String avatarURL;
+  File avatar;
   final List<User> likes = [];
   final List<User> matchs = [];
 
@@ -15,5 +17,6 @@ class User {
     @required this.email,
     @required this.password,
     this.avatarURL,
+    this.avatar,
   });
 }
