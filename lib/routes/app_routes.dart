@@ -13,4 +13,5 @@ class AppRoutes {
   static const PARTNERS = "/partners";
   static const CAMERA = "/camera";
   static const ALBUM = "/album";
+  static const REGISTER = "/register";
 }

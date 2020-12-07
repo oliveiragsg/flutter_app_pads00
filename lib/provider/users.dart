@@ -22,6 +22,7 @@ class Users with ChangeNotifier {
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final List<User> downloadedUsers = [];
     extractedData.forEach((userID, userData) {
+
       downloadedUsers.add(
         User(
           id: userID,

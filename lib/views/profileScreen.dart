@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:io' as Io;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class profileScreen extends StatefulWidget {
 
@@ -17,17 +19,31 @@ class profileScreen extends StatefulWidget {
 }
 
 class _profileScreenState extends State<profileScreen> {
+  final Map<String,String> _formData = {};
 
-  File image;
+  void _loadFormData(User user) {
+    if(user != null) {
+      _formData['id'] = user.id;
+      _formData['name'] = user.name;
+      _formData['email'] = user.email;
+      _formData['password'] = user.password;
+      _formData['avatarUrl'] = user.avatarURL;
+    }
+  }
+
+  Io.File image;
   final picker = ImagePicker();
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
 
+
     setState(() {
       if (pickedFile != null) {
-        image = File(pickedFile.path);
-        myUser.avatar = File(pickedFile.path);
+        image = Io.File(pickedFile.path);
+        myUser.avatar = image;
+
+
       } else {
         print('No image selected.');
       }
@@ -48,6 +64,7 @@ class _profileScreenState extends State<profileScreen> {
   Widget build(BuildContext context) {
     // A página so atualiza quando eu coloco o Provider. O provider tem o ChangeWithNotifier. Porém eu ainda não entendi completamente, porque eu não uso o Users diretamente aqui.
     final Users users = Provider.of(context);
+    _loadFormData(myUser);
 
     return Scaffold(
       backgroundColor: Colors.pink,

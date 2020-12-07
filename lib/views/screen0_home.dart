@@ -60,6 +60,13 @@ class Screen0 extends StatelessWidget {
                   Navigator.pushNamed(context, '/botnavbar');
                 },
               ),
+              RaisedButton(
+                color: Colors.red,
+                child: Text('Register'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+              ),
               SizedBox(
                 width: 500,
                 height: 500,

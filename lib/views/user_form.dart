@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
-import 'package:flutter_app_pads00/main.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
-import 'package:flutter_app_pads00/routes/app_routes.dart';
-import 'package:flutter_app_pads00/views/bottomNavBar.dart';
-import 'package:flutter_app_pads00/views/loginScreen.dart';
-import 'package:flutter_app_pads00/views/profileScreen.dart';
 import 'package:provider/provider.dart';
 
 class UserForm extends StatelessWidget {

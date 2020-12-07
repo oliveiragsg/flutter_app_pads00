@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 
 class signupScreen extends StatefulWidget {
+
   @override
   signupScreenState createState() => signupScreenState();
 }
