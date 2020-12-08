@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
@@ -5,6 +6,9 @@ import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'package:provider/provider.dart';
+
+
+final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
 
 class signupScreen extends StatefulWidget {
@@ -61,6 +65,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
   bool checkBox = false;
+  bool _success;
+  String _userEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -251,6 +257,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                           ),
                         );
                         myUser = await Users().byEmail(_formData['email']);
+                        _register();
                         Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
                       }
                       else {
@@ -268,4 +275,24 @@ class MyCustomFormState extends State<MyCustomForm> {
         )
     );
   }
+
+  void _register() async {
+    final auth.User user = (await
+    _auth.createUserWithEmailAndPassword(
+      email: _formData['email'],
+      password: _formData['password'],
+    )
+    ).user;
+    if (user != null) {
+      setState(() {
+        _success = true;
+        _userEmail = user.email;
+      });
+    } else {
+      setState(() {
+        _success = true;
+      });
+    }
+  }
+
 }

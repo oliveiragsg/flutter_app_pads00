@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io' as Io;
 
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+
 
 class profileScreen extends StatefulWidget {
 
@@ -218,7 +217,7 @@ class _profileScreenState extends State<profileScreen> {
                           actions: <Widget>[
                             FlatButton(
                               child: Text('Sim'),
-                              onPressed: () {
+                              onPressed: ()  {
                                 myUser = User(name: null, email: null, password: null);
                                 Navigator.of(context).pushNamed(AppRoutes.START);
                               },
@@ -241,3 +240,5 @@ class _profileScreenState extends State<profileScreen> {
     );
   }
 }
+
+

@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
@@ -6,6 +6,10 @@ import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
 import 'package:flutter_app_pads00/views/bottomNavBar.dart';
 import 'package:flutter_app_pads00/views/startScreen.dart';
+
+
+final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+
 
 class loginScreen extends StatelessWidget {
   final Email myEmail;
@@ -83,7 +87,8 @@ class MyCustomForm extends StatefulWidget {
 
 class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
-
+  final TextEditingController _passwordController = TextEditingController();
+  bool _success;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +102,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
               child: TextFormField(
                 obscureText: true,
+                controller: _passwordController,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 22.0,
@@ -127,10 +133,17 @@ class MyCustomFormState extends State<MyCustomForm> {
                 child: RaisedButton(
                   color: Colors.red,
                   child: Text('Enter'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState.validate()) {
                       Users().fetchUsers();
-                      Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
+                      _signInWithEmailAndPassword();
+                      if(_success == true) {
+                        Scaffold.of(context).showSnackBar(SnackBar(content: Text('Login com sucesso!')));
+                        Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
+                      }
+                      else {
+                        Scaffold.of(context).showSnackBar(SnackBar(content: Text('Não foi possível fazer login!')));
+                      }
                     }
                     else {
                       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Há campos que precisam ser preenchidos para prosseguir.')));
@@ -143,4 +156,25 @@ class MyCustomFormState extends State<MyCustomForm> {
         )
     );
   }
+
+  void _signInWithEmailAndPassword() async {
+    final auth.User user = (await _auth.signInWithEmailAndPassword(
+       email: myUser.email,
+       password: _passwordController.text,
+    )).user;
+
+
+    if (user != null) {
+      setState(() {
+        _success = true;
+      });
+    } else {
+      setState(() {
+        _success = false;
+      });
+    }
+  }
+
 }
+
+
