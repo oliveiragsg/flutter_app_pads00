@@ -139,7 +139,7 @@ class Users with ChangeNotifier {
       );
     } else {
       final response = await http.post(
-        '$_baseURL/users.json',
+        '$_baseURL/users/${user.id}.json',
         body: json.encode({
           'name': user.name,
           'email': user.email,

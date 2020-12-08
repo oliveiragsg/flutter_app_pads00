@@ -67,6 +67,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool checkBox = false;
   bool _success;
   String _userEmail;
+  String _userID;
 
   @override
   Widget build(BuildContext context) {
@@ -249,16 +250,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     if (_formKey.currentState.validate()) {
                       if (checkBox == true) {
                         _formKey.currentState.save();
-                        Provider.of<Users>(context, listen:false).put(
-                          User(
-                            name: _formData['name'],
-                            email: _formData['email'],
-                            password: _formData['password'],
-                          ),
-                        );
-                        myUser = await Users().byEmail(_formData['email']);
                         _register();
-                        Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
                       }
                       else {
                         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Concorde com os Termos de Adesão para Prosseguir')));
@@ -284,9 +276,20 @@ class MyCustomFormState extends State<MyCustomForm> {
     )
     ).user;
     if (user != null) {
-      setState(() {
+      setState(() async {
         _success = true;
         _userEmail = user.email;
+        _userID = user.uid;
+        await Provider.of<Users>(context, listen:false).put(
+          User(
+            id: _userID,
+            name: _formData['name'],
+            email: _formData['email'],
+            password: _formData['password'],
+          ),
+        );
+        myUser = await Users().byEmail(_formData['email']);
+        Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
       });
     } else {
       setState(() {
