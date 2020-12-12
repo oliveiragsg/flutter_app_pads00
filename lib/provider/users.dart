@@ -67,8 +67,6 @@ class Users with ChangeNotifier {
       return;
     }
 
-    downloadUsersWithAfinity();
-
     //Carregar os likes para a lista local do myUser
     final response2 = await http.get(
         '$_baseURL/users/${myUser.id}/likes.json'
@@ -143,36 +141,6 @@ class Users with ChangeNotifier {
 
   User byIndex(int i) {
     return loadedUsers.elementAt(i);
-  }
-
-  User byPreference(int i) {
-    return loadedUsersWithAfinity.elementAt(i);
-  }
-
-  void downloadUsersWithAfinity() {
-
-    //Tem que repensar totalmente como fazer esse filtro , talvez ser como o isMatch ou algo assim.
-
-    List<User> usersByPreference = [];
-    int myGamesTotalSize = myUser.games.length;
-    int totalUsersSize = loadedUsers.length;
-
-    for(int index0 = 0; index0 < myGamesTotalSize; index0++) {
-      for(int index1 = 0; index1 < totalUsersSize; index1++) {
-        int totalGamesSize = loadedUsers.elementAt(index1).games.length;
-        print('Chegou aqui!!!!!!!!!!!');
-        print(totalGamesSize);
-        for(int index2 = 0; index2 < totalGamesSize; index2++) {
-
-          if(myUser.games.elementAt(index0).name == loadedUsers.elementAt(index1).games.elementAt(index2).name) {
-            usersByPreference.add(loadedUsers.elementAt(index1));
-          }
-        }
-      }
-    }
-    print(usersByPreference);
-    loadedUsersWithAfinity = usersByPreference;
-    notifyListeners();
   }
   
   Future<User> byEmail(String email) async {
