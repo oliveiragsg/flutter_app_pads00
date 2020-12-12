@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/views/loginScreen.dart';
-import 'package:flutter_app_pads00/views/profileScreen.dart';
 
 class startScreen extends StatelessWidget {
   @override

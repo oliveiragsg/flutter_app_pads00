@@ -1,7 +1,6 @@
 import 'dart:io' as Io;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/components/user_tile.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';

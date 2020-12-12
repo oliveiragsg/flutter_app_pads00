@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
+import 'package:flutter_app_pads00/models/game.dart';
+
 class User {
   final String id;
   final String name;
@@ -10,7 +12,7 @@ class User {
   File avatar;
   final List<User> likes = [];
   final List<User> matchs = [];
-  final List<String> games = [];
+  final List<Game> games = [];
   final List<String> gamingPlatform = [];
 
   User({

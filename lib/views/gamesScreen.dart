@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/components/game_tile.dart';
-import 'package:flutter_app_pads00/components/user_tile.dart';
 import 'package:flutter_app_pads00/data/games.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +29,7 @@ class _State extends State<GamesScreen> {
         itemBuilder: (ctx, i)  {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: GameTile(Games.elementAt(i)),
+            child: GameTile(Games.elementAt(i), myUser),
           );
         },
       ),

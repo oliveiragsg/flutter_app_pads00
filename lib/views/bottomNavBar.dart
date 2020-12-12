@@ -1,9 +1,6 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/data/myUser.dart';
-import 'package:flutter_app_pads00/models/user.dart';
-import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/views/partnersScreen.dart';
 import 'package:flutter_app_pads00/views/profileScreen.dart';
 import 'package:flutter_app_pads00/views/screen0_home.dart';
