@@ -10,6 +10,8 @@ class User {
   File avatar;
   final List<User> likes = [];
   final List<User> matchs = [];
+  final List<String> games = [];
+  final List<String> gamingPlatform = [];
 
   User({
     this.id,

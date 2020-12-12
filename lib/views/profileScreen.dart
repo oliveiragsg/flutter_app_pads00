@@ -1,6 +1,7 @@
 import 'dart:io' as Io;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/components/user_tile.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
@@ -202,6 +203,13 @@ class _profileScreenState extends State<profileScreen> {
                     fillColor: Colors.white,
                   ),
                 ),
+              ),
+              RaisedButton(
+                color: Colors.red,
+                child: Text('Games'),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.GAMES);
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(left:0.0, top: 200.0, right: 0.0, bottom: 10.0),
