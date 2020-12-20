@@ -280,14 +280,20 @@ class MyCustomFormState extends State<MyCustomForm> {
         _success = true;
         _userEmail = user.email;
         _userID = user.uid;
-        await Provider.of<Users>(context, listen:false).put(
-          User(
-            id: _userID,
-            name: _formData['name'],
-            email: _formData['email'],
-            password: _formData['password'],
-          ),
-        );
+        // await Provider.of<Users>(context, listen:false).put(
+        //   User(
+        //     id: _userID,
+        //     name: _formData['name'],
+        //     email: _formData['email'],
+        //     password: _formData['password'],
+        //   ),
+        // );
+        await Users().putDB(User(
+          id: _userID,
+          name: _formData['name'],
+          email: _formData['email'],
+          password: _formData['password'],
+        ), _userID);
         myUser = await Users().byEmail(_formData['email']);
         Navigator.of(context).pushReplacementNamed(AppRoutes.BOTNAVBAR);
       });

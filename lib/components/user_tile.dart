@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
@@ -42,6 +43,16 @@ class UserTile extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Text(user.name, //Name
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text('Games', //Name
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 30.0,
@@ -147,6 +158,15 @@ Future<bool> onLikeButtonTapped(bool isLiked) async{
 //Pego e alterado do exemplo: https://stackoverflow.com/questions/61205574/flutter-like-button-on-tap-increment-the-value-in-the-server
 Future <bool> like(status, User myOwnUser, User likedUser) async {
   Users().like(myOwnUser, likedUser);
+  final dbRef = FirebaseDatabase.instance.reference().child(likedUser.id);
+  print(dbRef.path);
   return Future.value(!status);
 }
+
+
+
+
+
+
+
 

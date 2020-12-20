@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/game.dart';
@@ -7,12 +8,24 @@ import 'package:http/http.dart' as http;
 
 class Users with ChangeNotifier {
   static const _baseURL = 'https://flutter-app-pads00.firebaseio.com/';
+  final dbUsers = FirebaseDatabase.instance.reference().child('users');
   List<User> loadedUsers = [];
   List<User> loadedUsersWithAfinity = [];
 
 
   Users() {
     fetchUsers();
+  }
+
+  Future<void> putDB(User user, String userID) async {
+    dbUsers.child(userID).set({
+      "name": user.name,
+      "email": user.email,
+      "avatarURL": user.avatarURL,
+      "password": user.password,
+    });
+    fetchUsers();
+    notifyListeners();
   }
 
 
