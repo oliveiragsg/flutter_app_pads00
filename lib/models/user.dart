@@ -12,7 +12,7 @@ class User {
   File avatar;
   final List<User> likes = [];
   final List<User> matchs = [];
-  final List<Game> games = [];
+  List<Game> games = [];
   final List<String> gamingPlatform = [];
 
   User({
@@ -22,5 +22,6 @@ class User {
     @required this.password,
     this.avatarURL,
     this.avatar,
+    this.games,
   });
 }
