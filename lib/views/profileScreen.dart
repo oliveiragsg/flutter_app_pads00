@@ -1,10 +1,13 @@
+import 'dart:developer';
 import 'dart:io' as Io;
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:flutter_app_pads00/routes/app_routes.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -19,6 +22,9 @@ class profileScreen extends StatefulWidget {
 
 class _profileScreenState extends State<profileScreen> {
   final Map<String,String> _formData = {};
+
+  FirebaseStorage _storage = FirebaseStorage.instance;
+
 
   void _loadFormData(User user) {
     if(user != null) {
@@ -36,11 +42,29 @@ class _profileScreenState extends State<profileScreen> {
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
 
-
-    setState(() {
+    setState(() async {
       if (pickedFile != null) {
         image = Io.File(pickedFile.path);
         myUser.avatar = image;
+
+        //Testando upload de imagem para o Storage do Firebase
+
+
+        TaskSnapshot uploadTask = await _storage.ref(_formData["id"]).child(DateTime.now().toString()).putFile(image);
+
+        String url = await uploadTask.ref.getDownloadURL();
+
+        print('URLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL');
+        print(url);
+
+        Users().put(User(
+          id: myUser.id,
+          name: myUser.name,
+          email: myUser.email,
+          password: myUser.password,
+          avatarURL: url,
+        ));
+
 
 
       } else {
@@ -51,9 +75,9 @@ class _profileScreenState extends State<profileScreen> {
   }
 
 
-   var avatar = myUser.avatar==null
+   var avatar = myUser.avatarURL==null
        ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
-       : CircleAvatar(backgroundImage: FileImage(myUser.avatar), maxRadius: 100,);
+       : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
   // var avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
   //     ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
   //     : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
