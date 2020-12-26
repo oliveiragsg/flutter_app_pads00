@@ -1,40 +1,57 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/components/game_tile.dart';
-import 'package:flutter_app_pads00/data/games.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
-import 'package:flutter_app_pads00/provider/users.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_app_pads00/models/game.dart';
+
 
 class GamesScreen extends StatefulWidget {
 
   @override
-  _State createState() => _State();
+  _GameScreenState createState() => _GameScreenState();
 }
 
-class _State extends State<GamesScreen> {
+class _GameScreenState extends State<GamesScreen> {
+
+  final dbUsers = FirebaseDatabase.instance.reference().child('games');
+
   @override
   Widget build(BuildContext context) {
-    final Users users = Provider.of(context);
-
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text('Games'),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 70.0),
+          child: Text('Lista de Jogos'),
         ),
         backgroundColor: Colors.redAccent,
-        automaticallyImplyLeading: false,
       ),
-      body: ListView.builder(
-        itemCount: Games.length,
-        itemBuilder: (ctx, i)  {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: GameTile(Games.elementAt(i), myUser),
-          );
+      body: FutureBuilder(
+        future: dbUsers.once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return SingleChildScrollView(
+              child: Row(
+                children: [
+                  Flexible(
+                    child: new FirebaseAnimatedList(
+                        shrinkWrap: true,
+                        query: dbUsers, itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
+                      return new GameTile(new Game(
+                          id: snapshot.key,
+                          name: snapshot.value["name"],
+                        ), myUser,
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            );
+          }
+          return Center(child: CircularProgressIndicator());
         },
       ),
       backgroundColor: Colors.pink,
     );
   }
-
 }

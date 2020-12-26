@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/game.dart';
@@ -12,11 +11,10 @@ class GameTile extends StatelessWidget {
   final User user;
   const GameTile(this.game, this.user);
 
-  @override
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(10.0),
       child: Container(
         width: 50,
         height: 50,
@@ -25,7 +23,7 @@ class GameTile extends StatelessWidget {
           border: Border.all(color: Colors.black, width: 2),
         ),
         child: LikeButton(
-          isLiked: Users().alreadyAdded(myUser, game),
+          isLiked: Users().alreadyAdded(user, game),
           size: 35.0,
           circleColor:
           CircleColor(start: Color(0xff00ddff), end: Color(0xff0099cc)),
@@ -65,9 +63,23 @@ class GameTile extends StatelessWidget {
   }
 }
 
+
 Future <bool> add(status, User myOwnUser, Game addedGame) async {
   Users().addGame(myOwnUser, addedGame);
   return Future.value(!status);
 }
 
+Future<bool> isAdded(User myUser, Game game) async {
+  await Users().alreadyAddedDB(myUser, game).then((value) {
+    print('função de isAdded no GameTile !!!!!!!!!!!!!!!!!!!');
+    print(value);
+    if(value == true) {
+      return value;
+    }
+    else {
+      return value;
+    }
+  });
+  return false;
+}
 

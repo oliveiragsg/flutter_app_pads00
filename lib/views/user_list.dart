@@ -46,11 +46,9 @@ import 'package:flutter_app_pads00/provider/users.dart';
 
 class UserList extends StatefulWidget {
 
-
-
   @override
   _userListState createState() => _userListState();
-}
+  }
 
 class _userListState extends State<UserList> {
 

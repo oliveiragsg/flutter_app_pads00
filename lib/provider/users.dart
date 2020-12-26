@@ -34,12 +34,11 @@ class Users with ChangeNotifier {
   //Feito a partir deste tutorial: https://medium.com/flutterdevs/http-request-dcc13e885985
   Future <void> fetchUsers() async {
     final response = await http.get(
-      'https://flutter-app-pads00.firebaseio.com/users.json'
+        'https://flutter-app-pads00.firebaseio.com/users.json'
     );
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final List<User> downloadedUsers = [];
     extractedData.forEach((userID, userData) {
-
       downloadedUsers.add(
         User(
           id: userID,
@@ -57,9 +56,10 @@ class Users with ChangeNotifier {
         '$_baseURL/users/${myUser.id}/games.json'
     );
     if (response4.statusCode == 200) {
-      final extractedData4 = json.decode(response4.body) as Map<String, dynamic>;
+      final extractedData4 = json.decode(response4.body) as Map<String,
+          dynamic>;
       final List<Game> listGames = [];
-      if(extractedData4 == null) {
+      if (extractedData4 == null) {
         return;
       }
       else {
@@ -71,8 +71,11 @@ class Users with ChangeNotifier {
             ),
           );
         });
-        myUser.games.clear();
+        if(myUser.games.isNotEmpty) {
+          myUser.games.clear();
+        }
         int totalGames = listGames.length;
+        print(listGames.length);
         for (int count = 0; count < totalGames; count++) {
           myUser.games.add(listGames.elementAt(count));
         }
@@ -87,9 +90,10 @@ class Users with ChangeNotifier {
         '$_baseURL/users/${myUser.id}/likes.json'
     );
     if (response2.statusCode == 200) {
-      final extractedData2 = json.decode(response2.body) as Map<String, dynamic>;
+      final extractedData2 = json.decode(response2.body) as Map<String,
+          dynamic>;
       final List<User> listUsers = [];
-      if(extractedData2 == null) {
+      if (extractedData2 == null) {
         return;
       }
       else {
@@ -114,9 +118,10 @@ class Users with ChangeNotifier {
         '$_baseURL/users/${myUser.id}/matchs.json'
     );
     if (response3.statusCode == 200) {
-      final extractedData3 = json.decode(response3.body) as Map<String, dynamic>;
+      final extractedData3 = json.decode(response3.body) as Map<String,
+          dynamic>;
       final List<User> listMatchs = [];
-      if(extractedData3 == null) {
+      if (extractedData3 == null) {
         return;
       }
       else {
@@ -146,8 +151,10 @@ class Users with ChangeNotifier {
 
   User byID(String id) {
     int totalSize = loadedUsers.length;
-    for (int count = 0; count <totalSize; count++) {
-      if(loadedUsers.elementAt(count).id == id) {
+    for (int count = 0; count < totalSize; count++) {
+      if (loadedUsers
+          .elementAt(count)
+          .id == id) {
         return loadedUsers.elementAt(count);
       }
     }
@@ -157,12 +164,14 @@ class Users with ChangeNotifier {
   User byIndex(int i) {
     return loadedUsers.elementAt(i);
   }
-  
+
   Future<User> byEmail(String email) async {
     await fetchUsers();
     int totalSize = loadedUsers.length;
     for (int count = 0; count < totalSize; count++) {
-      if (loadedUsers.elementAt(count).email == email) {
+      if (loadedUsers
+          .elementAt(count)
+          .email == email) {
         return loadedUsers.elementAt(count);
       }
     }
@@ -170,10 +179,12 @@ class Users with ChangeNotifier {
   }
 
   Future<void> put(User user) async {
-    if(user==null) {
+    if (user == null) {
       return;
     }
-    if(user.id != null && user.id.trim().isNotEmpty) {
+    if (user.id != null && user.id
+        .trim()
+        .isNotEmpty) {
       await http.patch(
         '$_baseURL/users/${user.id}.json',
         body: json.encode({
@@ -199,7 +210,7 @@ class Users with ChangeNotifier {
   }
 
   void remove(User user) {
-    if(user != null && user.id != null) {
+    if (user != null && user.id != null) {
       http.delete(
         '$_baseURL/users/${user.id}.json',
       );
@@ -212,7 +223,9 @@ class Users with ChangeNotifier {
     int totalSize = myOwnUser.likes.length;
 
     for (int count = 0; count < totalSize; count++) {
-      if (myOwnUser.likes.elementAt(count).id == likedUser.id) {
+      if (myOwnUser.likes
+          .elementAt(count)
+          .id == likedUser.id) {
         return;
       }
     }
@@ -227,7 +240,7 @@ class Users with ChangeNotifier {
       }),
     );
 
-    if(await isMatch(myUser, likedUser) == true) {
+    if (await isMatch(myUser, likedUser) == true) {
       print('--------------');
       print('Deu match!!!');
       await http.patch(
@@ -251,7 +264,6 @@ class Users with ChangeNotifier {
     }
 
     fetchUsers();
-
   }
 
   Future<bool> isMatch(User myUser, User likedUser) async {
@@ -264,7 +276,7 @@ class Users with ChangeNotifier {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     final response = await http.get(
-        '$_baseURL/users/${likedUser.id}/likes.json',
+      '$_baseURL/users/${likedUser.id}/likes.json',
     );
     if (response.body.length != 4) {
       final response2 = await http.get(
@@ -302,57 +314,53 @@ class Users with ChangeNotifier {
 
   // Games
   void addGame(User myOwnUser, Game addedGame) async {
-    int totalSize = myOwnUser.games.length;
+    final dbUserGames = FirebaseDatabase.instance.reference().child(
+        'users/' + myUser.id + '/games/');
 
-    for (int count = 0; count < totalSize; count++) {
-      if (myOwnUser.games.elementAt(count).name == addedGame.name) {
-        await http.delete(
-          '$_baseURL/users/${myOwnUser.id}/games/${myOwnUser.games.elementAt(count).id}.json',);
-        myOwnUser.games.remove(addedGame);
-        return;
-      }
+    DataSnapshot snapshot = await dbUserGames.child(addedGame.id).once();
+    if (snapshot.value == null) {
+      dbUserGames.child(addedGame.id).set({
+        "name": addedGame.name,
+      });
+      myOwnUser.games.add(Game(id: addedGame.id, name: addedGame.name));
     }
-    await http.post(
-      '$_baseURL/users/${myOwnUser.id}/games.json',
-      body: json.encode({
-        'name': addedGame.name,
-      }),
-    );
+    else {
+      dbUserGames.child(addedGame.id).remove();
+      myOwnUser.games.remove(Game(id: addedGame.id, name: addedGame.name));
+    }
 
+    notifyListeners();
     fetchUsers();
+  }
 
+  Future<bool> alreadyAddedDB(User myUser, Game game) async {
+    final dbUserGames = FirebaseDatabase.instance.reference().child(
+        'users/' + myUser.id + '/games/');
+
+    DataSnapshot snapshot = await dbUserGames.child(game.id).once();
+    print(snapshot.value);
+    if (snapshot.value == null) {
+      return Future<bool>.value(false);
+    }
+    else {
+      return Future<bool>.value(true);
+    }
   }
 
   bool alreadyAdded(User myUser, Game game) {
+    if (myUser.games != null) {
+      int totalGames = myUser.games.length;
 
-    // Por enquanto pegando localmente através do myUser, mas depois ter que fazer desta forma como Future<bool> alreadyAdded(User myUser, Game game) async {} para usar o Firebase.
-    // final response = await http.get(
-    //   '$_baseURL/users/${myUser.id}/games.json',
-    // );
-    // if (response.body.length != 4) {
-    //   final response2 = await http.get(
-    //       '$_baseURL/users/${game.id}/games/${game.name}.json'
-    //   );
-    //   if (response2.body.length != 4) {
-    //     return true;
-    //   }
-    //   else {
-    //     return false;
-    //   }
-    // }
-    // else {
-    //   return false;
-    // }
-
-    int totalSize = myUser.games.length;
-
-    for (int count = 0; count < totalSize; count++) {
-      if(myUser.games.elementAt(count).name == game.name) {
-        return true;
+      for (int i = 0; i < totalGames; i++) {
+        if (game.id == myUser.games.elementAt(i).id) {
+          return true;
+        }
       }
+      return false;
     }
-    return false;
+    else {
+      return null;
+    }
   }
-
 
 }
