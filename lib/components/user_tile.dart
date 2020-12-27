@@ -9,6 +9,8 @@ class UserTile extends StatelessWidget {
   final User user;
   const UserTile(this.user);
 
+  get item => null;
+
   @override
   Widget build(BuildContext context) {
     final avatar = user.avatarURL==null || user.avatarURL.isEmpty
@@ -94,7 +96,7 @@ class UserTile extends StatelessWidget {
                               );
                             return result;
                           },
-                          onTap: onLikeButtonTapped,
+                          onTap: dislike,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 80),
@@ -149,6 +151,11 @@ class UserTile extends StatelessWidget {
 
 //Padrão anterior do LikeButton, não usado!
 Future<bool> onLikeButtonTapped(bool isLiked) async{
+  print('Adicionar a função para descartar este usuário!!!');
+  return !isLiked;
+}
+
+Future<bool> dislike(bool isLiked) async{
   print('Adicionar a função para descartar este usuário!!!');
   return !isLiked;
 }

@@ -37,6 +37,8 @@
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_database/ui/firebase_list.dart';
+import 'package:firebase_database/ui/firebase_sorted_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app_pads00/components/user_tile.dart';
@@ -53,6 +55,7 @@ class UserList extends StatefulWidget {
 class _userListState extends State<UserList> {
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users');
+  final List<User> userList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -68,44 +71,60 @@ class _userListState extends State<UserList> {
         future: dbUsers.once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           if (snapshot.hasData) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            bool checkList = checkUserList(userList);
+            print(checkList);
+            if(checkList == true){
+              print("Deu true entou vou adicionar mais users");
+              values.forEach((key, value) {
+                userList.add(User(
+                  id: key,
+                  name: value["name"],
+                  email: value["email"],
+                  password: value["password"],
+                  avatarURL: value["avatarURL"],
+                ));
+              });
+              print("após adicionar users porque a lista estava vazia agora tem:");
+              print(userList.length);
+            }
+            return Center(
               child: Column(
-                children: [
-                  Flexible(
-                    child: new FirebaseAnimatedList(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        query: dbUsers, itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
-                          return new UserTile(
-                              User(
-                                  id: snapshot.key,
-                                  name: snapshot.value["name"],
-                                  email: snapshot.value["email"],
-                                  password: snapshot.value["password"],
-                                  avatarURL: snapshot.value["avatarURL"],)
-                          );
-                          // ListTile(
-                          //   trailing: IconButton(icon: Icon(Icons.delete),
-                          //   onPressed: () => dbUsers.child(snapshot.key).remove(),),
-                          //   title: new Text(snapshot.value["name"]),
-                          // );
-                    }),
+                    children: [
+                      Flexible(
+                        child: new ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 1,
+                            itemBuilder: (BuildContext context, int index) {
+                              final item = userList[index].id;
+                              return Dismissible(
+                                key: Key(item),
+                                onDismissed: (direction) {
+                                  if(direction == DismissDirection.startToEnd){
+                                    setState(() {
+                                      userList.removeAt(index);
+                                    });
+                                    Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
+                                  }
+                                  else if(direction == DismissDirection.endToStart){
+                                    setState(() {
+                                      userList.removeAt(index);
+                                    });
+                                    Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
+                                  }
+
+
+                                },
+                                child: new UserTile(
+                                    userList[index]
+                                ),
+                              );
+                        }),
+                      ),
+                    ],
                   ),
-                ],
-              ),
             );
-            // return Padding(
-            //   padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10, right: 10),
-            //   child: new ListView.builder(
-            //     shrinkWrap: true,
-            //     itemCount: userList.length,
-            //     scrollDirection: Axis.horizontal,
-            //     itemBuilder: (BuildContext context, int index) {
-            //       return UserTile(userList.elementAt(index));
-            //     }
-            //   ),
-            // );
           }
           return Center(child: CircularProgressIndicator());
         },
@@ -113,4 +132,16 @@ class _userListState extends State<UserList> {
         backgroundColor: Colors.pink,
     );
   }
+}
+
+bool checkUserList(List<User> userList) {
+  print("______________________________");
+  print(userList.length);
+  if(userList.length == 0) {
+    return true;
+  }
+  else {
+    return false;
+  }
+
 }
