@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class UserForm extends StatelessWidget {
@@ -27,8 +28,10 @@ class UserForm extends StatelessWidget {
 
 
     return Scaffold(
+      backgroundColor: Colors.pink,
       appBar: AppBar(
-        title: Text("Form de usuário"),
+        backgroundColor: Colors.redAccent,
+        title: Center(child: Text("Form de usuário")),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.save),
@@ -64,23 +67,42 @@ class UserForm extends StatelessWidget {
             children: <Widget>[
               TextFormField(
                 initialValue: _formData['name'],
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                  ),
+                  border: OutlineInputBorder()),
                 onSaved: (value) => _formData['name']=value,
               ),
-              TextFormField(
-                initialValue: _formData['email'],
-                decoration: InputDecoration(labelText: 'E-mail'),
-                onSaved: (value) => _formData['email']=value,
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: TextFormField(
+                  initialValue: _formData['email'],
+                  decoration: InputDecoration(
+                      labelText: 'E-mail',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                      ),
+                      border: OutlineInputBorder()),
+                  onSaved: (value) => _formData['email']=value,
+                ),
               ),
-              TextFormField(
-                initialValue: _formData['password'],
-                decoration: InputDecoration(labelText: 'Password'),
-                onSaved: (value) => _formData['password']=value,
-              ),
-              TextFormField(
-                initialValue: _formData['avatarURL'],
-                decoration: InputDecoration(labelText: 'URL do Avatar'),
-                onSaved: (value) => _formData['avatarURL']=value,
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: TextFormField(
+                  initialValue: _formData['password'],
+                  decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                      ),
+                      border: OutlineInputBorder()),
+                  onSaved: (value) => _formData['password']=value,
+                ),
               ),
             ],
           ),

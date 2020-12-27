@@ -314,19 +314,35 @@ class Users with ChangeNotifier {
 
   // Games
   void addGame(User myOwnUser, Game addedGame) async {
+    //Database for the games of the current user.
     final dbUserGames = FirebaseDatabase.instance.reference().child(
         'users/' + myUser.id + '/games/');
 
+    //Database for the users of the current game.
+    final dbGameUsers = FirebaseDatabase.instance.reference().child(
+        'games/' + addedGame.id + '/users/');
+
+    //Snapshot from the dbUserGames used to check if the game is already added to the user games database or not.
     DataSnapshot snapshot = await dbUserGames.child(addedGame.id).once();
     if (snapshot.value == null) {
+      //Add the game to the user games database.
       dbUserGames.child(addedGame.id).set({
         "name": addedGame.name,
       });
+      //Add the game to the local user games database.
       myOwnUser.games.add(Game(id: addedGame.id, name: addedGame.name));
+      //Add the user to the game users database.
+      dbGameUsers.child(myOwnUser.id).set({
+        "email": myOwnUser.email,
+      });
     }
     else {
+      //Remove the game from the user games database.
       dbUserGames.child(addedGame.id).remove();
+      //Remove the game from the local user games database.
       myOwnUser.games.remove(Game(id: addedGame.id, name: addedGame.name));
+      //Remove the user from the game users database.
+      dbGameUsers.child(myOwnUser.id).remove();
     }
 
     notifyListeners();
