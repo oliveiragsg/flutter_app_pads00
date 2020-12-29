@@ -75,7 +75,6 @@ class Users with ChangeNotifier {
           myUser.games.clear();
         }
         int totalGames = listGames.length;
-        print(listGames.length);
         for (int count = 0; count < totalGames; count++) {
           myUser.games.add(listGames.elementAt(count));
         }
@@ -223,9 +222,7 @@ class Users with ChangeNotifier {
     int totalSize = myOwnUser.likes.length;
 
     for (int count = 0; count < totalSize; count++) {
-      if (myOwnUser.likes
-          .elementAt(count)
-          .id == likedUser.id) {
+      if (myOwnUser.likes.elementAt(count).id == likedUser.id) {
         return;
       }
     }
@@ -241,8 +238,6 @@ class Users with ChangeNotifier {
     );
 
     if (await isMatch(myUser, likedUser) == true) {
-      print('--------------');
-      print('Deu match!!!');
       await http.patch(
         '$_baseURL/users/${myOwnUser.id}/matchs/${likedUser.id}.json',
         body: json.encode({
@@ -354,7 +349,6 @@ class Users with ChangeNotifier {
         'users/' + myUser.id + '/games/');
 
     DataSnapshot snapshot = await dbUserGames.child(game.id).once();
-    print(snapshot.value);
     if (snapshot.value == null) {
       return Future<bool>.value(false);
     }

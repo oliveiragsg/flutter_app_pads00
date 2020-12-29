@@ -40,6 +40,7 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_database/ui/firebase_list.dart';
 import 'package:firebase_database/ui/firebase_sorted_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app_pads00/components/user_tile.dart';
 import 'package:flutter_app_pads00/models/game.dart';
@@ -73,9 +74,7 @@ class _userListState extends State<UserList> {
           if (snapshot.hasData) {
             Map<dynamic, dynamic> values = snapshot.data.value;
             bool checkList = checkUserList(userList);
-            print(checkList);
             if(checkList == true){
-              print("Deu true entou vou adicionar mais users");
               values.forEach((key, value) {
                 userList.add(User(
                   id: key,
@@ -85,8 +84,6 @@ class _userListState extends State<UserList> {
                   avatarURL: value["avatarURL"],
                 ));
               });
-              print("após adicionar users porque a lista estava vazia agora tem:");
-              print(userList.length);
             }
             return Center(
               child: Column(
@@ -98,17 +95,22 @@ class _userListState extends State<UserList> {
                             itemCount: 1,
                             itemBuilder: (BuildContext context, int index) {
                               final item = userList[index].id;
-                              return Dismissible(
+
+                              return new Dismissible(
                                 key: Key(item),
                                 onDismissed: (direction) {
                                   if(direction == DismissDirection.startToEnd){
                                     setState(() {
+                                      bool status = false;
+                                      like(status, myUser, userList[index]);
                                       userList.removeAt(index);
                                     });
                                     Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
                                   }
                                   else if(direction == DismissDirection.endToStart){
                                     setState(() {
+                                      bool status = false;
+                                      dislike(status, myUser, userList[index]);
                                       userList.removeAt(index);
                                     });
                                     Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
@@ -116,9 +118,9 @@ class _userListState extends State<UserList> {
 
 
                                 },
-                                child: new UserTile(
-                                    userList[index]
-                                ),
+                                child: UserTile(userList[index], () {
+                                  dismiss(index);
+                                }),
                               );
                         }),
                       ),
@@ -132,11 +134,19 @@ class _userListState extends State<UserList> {
         backgroundColor: Colors.pink,
     );
   }
+
+  void dismiss(int index) {
+    setState(() {
+      userList.removeAt(index);
+    });
+    Scaffold.of(context).showSnackBar(SnackBar(content: Text("${userList[index].id} dismissed")));
+  }
+
 }
 
+
+
 bool checkUserList(List<User> userList) {
-  print("______________________________");
-  print(userList.length);
   if(userList.length == 0) {
     return true;
   }

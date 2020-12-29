@@ -7,9 +7,8 @@ import 'package:like_button/like_button.dart';
 
 class UserTile extends StatelessWidget {
   final User user;
-  const UserTile(this.user);
-
-  get item => null;
+  final VoidCallback onLike;
+  const UserTile(this.user, this.onLike);
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +95,10 @@ class UserTile extends StatelessWidget {
                               );
                             return result;
                           },
-                          onTap: dislike,
+                          onTap: (isLiked) {
+                            onLike();
+                            return dislike(isLiked, myUser, user);
+                          },
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 80),
@@ -132,6 +134,7 @@ class UserTile extends StatelessWidget {
                               return result;
                             },
                             onTap: (isLiked) {
+                              onLike();
                               return like(isLiked, myUser, user);
                             },
                           ),
@@ -151,13 +154,14 @@ class UserTile extends StatelessWidget {
 
 //Padrão anterior do LikeButton, não usado!
 Future<bool> onLikeButtonTapped(bool isLiked) async{
-  print('Adicionar a função para descartar este usuário!!!');
   return !isLiked;
 }
 
-Future<bool> dislike(bool isLiked) async{
-  print('Adicionar a função para descartar este usuário!!!');
-  return !isLiked;
+Future <bool> dislike(status, User myOwnUser, User likedUser) async {
+  //Users().like(myOwnUser, likedUser); Substituir por um dislike.
+  //final dbRef = FirebaseDatabase.instance.reference().child(likedUser.id);
+  print("Disliked!!!!!!!!!");
+  return Future.value(!status);
 }
 
 
@@ -165,7 +169,7 @@ Future<bool> dislike(bool isLiked) async{
 Future <bool> like(status, User myOwnUser, User likedUser) async {
   Users().like(myOwnUser, likedUser);
   final dbRef = FirebaseDatabase.instance.reference().child(likedUser.id);
-  print(dbRef.path);
+  print("Liked!!!!!!!!!");
   return Future.value(!status);
 }
 
