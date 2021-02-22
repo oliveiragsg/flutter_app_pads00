@@ -36,16 +36,11 @@
 // }
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:firebase_database/ui/firebase_list.dart';
-import 'package:firebase_database/ui/firebase_sorted_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app_pads00/components/user_tile.dart';
-import 'package:flutter_app_pads00/models/game.dart';
 import 'package:flutter_app_pads00/models/user.dart';
-import 'package:flutter_app_pads00/provider/users.dart';
 
 class UserList extends StatefulWidget {
 
@@ -65,6 +60,22 @@ class _userListState extends State<UserList> {
         title: Center(
           child: Text('Lista de Usuários'),
         ),
+        actions: [
+          IconButton(icon: Icon(Icons.list, size: 35, color: Colors.white,), onPressed: () {
+            showModalBottomSheet(context: context, builder: (BuildContext context) {
+              return Container(
+                height: 500,
+                decoration: BoxDecoration(
+                    color: Colors.pink,
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 4,
+                    )
+                ),
+              );
+            });
+          }),
+        ],
         backgroundColor: Colors.redAccent,
         automaticallyImplyLeading: false,
       ),
@@ -86,46 +97,46 @@ class _userListState extends State<UserList> {
               });
             }
             return Center(
-              child: Column(
-                    children: [
-                      Flexible(
-                        child: new ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 1,
-                            itemBuilder: (BuildContext context, int index) {
-                              final item = userList[index].id;
+                child: Column(
+                      children: [
+                        Flexible(
+                          child: new ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 1,
+                              itemBuilder: (BuildContext context, int index) {
+                                final item = userList[index].id;
 
-                              return new Dismissible(
-                                key: Key(item),
-                                onDismissed: (direction) {
-                                  if(direction == DismissDirection.startToEnd){
-                                    setState(() {
-                                      bool status = false;
-                                      like(status, myUser, userList[index]);
-                                      userList.removeAt(index);
-                                    });
-                                    Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
-                                  }
-                                  else if(direction == DismissDirection.endToStart){
-                                    setState(() {
-                                      bool status = false;
-                                      dislike(status, myUser, userList[index]);
-                                      userList.removeAt(index);
-                                    });
-                                    Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
-                                  }
+                                return new Dismissible(
+                                  key: Key(item),
+                                  onDismissed: (direction) {
+                                    if(direction == DismissDirection.startToEnd){
+                                      setState(() {
+                                        bool status = false;
+                                        like(status, myUser, userList[index]);
+                                        userList.removeAt(index);
+                                      });
+                                      Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
+                                    }
+                                    else if(direction == DismissDirection.endToStart){
+                                      setState(() {
+                                        bool status = false;
+                                        dislike(status, myUser, userList[index]);
+                                        userList.removeAt(index);
+                                      });
+                                      Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
+                                    }
 
 
-                                },
-                                child: UserTile(userList[index], () {
-                                  dismiss(index);
-                                }),
-                              );
-                        }),
-                      ),
-                    ],
-                  ),
+                                  },
+                                  child: UserTile(userList[index], () {
+                                    dismiss(index);
+                                  }),
+                                );
+                          }),
+                        ),
+                      ],
+                    ),
             );
           }
           return Center(child: CircularProgressIndicator());

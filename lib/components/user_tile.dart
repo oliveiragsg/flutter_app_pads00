@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
+import 'package:flutter_app_pads00/models/game.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 import 'package:flutter_app_pads00/provider/users.dart';
 import 'package:like_button/like_button.dart';
@@ -15,6 +16,8 @@ class UserTile extends StatelessWidget {
     final avatar = user.avatarURL==null || user.avatarURL.isEmpty
         ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
           : CircleAvatar(backgroundImage: NetworkImage(user.avatarURL), maxRadius: 100,);
+
+    final dbUserGames = FirebaseDatabase.instance.reference().child("users/" + user.id + "/games");
 
     return Row(
       children: [
@@ -50,18 +53,46 @@ class UserTile extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Text('Games', //Name
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        color: Colors.black,
+                  Text(user.games.length.toString()),
+                  SingleChildScrollView(
+                    child: SizedBox(
+                      width: 200,
+                      height: 150,
+                      child: FutureBuilder(
+                        future: dbUserGames.once(),
+                        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+                          if(snapshot.hasData) {
+                            print(snapshot.data.value);
+                            Map<dynamic, dynamic> values = snapshot.data.value;
+                            print(values);
+                            values.forEach((key, value) {
+                              print(value["name"]);
+                              user.games.add(Game(
+                                id: key,
+                                name: value["name"],
+                              ));
+                            });
+                          }
+                          return Flexible(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.all(5),
+                              itemCount: user.games.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  height: 20,
+                                  color: Colors.white,
+                                  child: Center(child: Text(user.games[index].name),),
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
+
                   Padding(
-                    padding: const EdgeInsets.only(left: 30 ,top: 145),
+                    padding: const EdgeInsets.only(left: 30 ,top: 10),
                     child: Row(
                       children: [
                         LikeButton(
@@ -168,7 +199,7 @@ Future <bool> dislike(status, User myOwnUser, User likedUser) async {
 //Pego e alterado do exemplo: https://stackoverflow.com/questions/61205574/flutter-like-button-on-tap-increment-the-value-in-the-server
 Future <bool> like(status, User myOwnUser, User likedUser) async {
   Users().like(myOwnUser, likedUser);
-  final dbRef = FirebaseDatabase.instance.reference().child(likedUser.id);
+  //final dbRef = FirebaseDatabase.instance.reference().child(likedUser.id);
   print("Liked!!!!!!!!!");
   return Future.value(!status);
 }
