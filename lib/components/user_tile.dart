@@ -53,7 +53,16 @@ class UserTile extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(user.games.length.toString()),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text("Games", //Name
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
                   SingleChildScrollView(
                     child: SizedBox(
                       width: 200,
@@ -62,16 +71,17 @@ class UserTile extends StatelessWidget {
                         future: dbUserGames.once(),
                         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
                           if(snapshot.hasData) {
-                            print(snapshot.data.value);
                             Map<dynamic, dynamic> values = snapshot.data.value;
-                            print(values);
-                            values.forEach((key, value) {
-                              print(value["name"]);
-                              user.games.add(Game(
-                                id: key,
-                                name: value["name"],
-                              ));
-                            });
+                            if(user.games.isEmpty) {
+                              if(values != null) {
+                                values.forEach((key, value) {
+                                  user.games.add(Game(
+                                    id: key,
+                                    name: value["name"],
+                                  ));
+                                });
+                              }
+                            }
                           }
                           return Flexible(
                             child: ListView.builder(

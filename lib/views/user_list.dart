@@ -36,10 +36,13 @@
 // }
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_pads00/components/game_tile.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app_pads00/components/user_tile.dart';
+import 'package:flutter_app_pads00/models/game.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 
 class UserList extends StatefulWidget {
@@ -51,6 +54,7 @@ class UserList extends StatefulWidget {
 class _userListState extends State<UserList> {
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users');
+  final dbGames = FirebaseDatabase.instance.reference().child('games');
   final List<User> userList = [];
 
   @override
@@ -71,6 +75,33 @@ class _userListState extends State<UserList> {
                       color: Colors.black,
                       width: 4,
                     )
+                ),
+                child: FutureBuilder(
+                  future: dbGames.once(),
+                  builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      return SingleChildScrollView(
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: new FirebaseAnimatedList(
+                                  shrinkWrap: true,
+                                  query: dbGames, itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
+                                return new GameTile(new Game(
+                                  id: snapshot.key,
+                                  name: snapshot.value["name"],
+                                ), myUser,
+                                );
+                              }),
+                              fit: FlexFit.tight,
+                              flex: 1,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return Center(child: CircularProgressIndicator());
+                  },
                 ),
               );
             });
@@ -134,6 +165,8 @@ class _userListState extends State<UserList> {
                                   }),
                                 );
                           }),
+                          fit: FlexFit.tight,
+                          flex: 1,
                         ),
                       ],
                     ),
