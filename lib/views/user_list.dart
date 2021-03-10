@@ -35,6 +35,7 @@
 //   }
 // }
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -49,16 +50,27 @@ class UserList extends StatefulWidget {
 
   @override
   _userListState createState() => _userListState();
-  }
+}
 
 class _userListState extends State<UserList> {
 
-  final dbUsers = FirebaseDatabase.instance.reference().child('users');
+  final dbUsers = FirebaseDatabase.instance.reference().child('users').limitToFirst(3);
   final dbGames = FirebaseDatabase.instance.reference().child('games');
   final List<User> userList = [];
+  final List<User> filteredUserList = [];
+  final List<Game> gamesList = [];
+  bool filterBool = false;
+
+  List<String> filterList = [];
+  //final db = FirebaseFirestore.instance.collection('games').where('name', isEqualTo: ['Eternal Hope']);
 
   @override
   Widget build(BuildContext context) {
+    filterList.add('Eternal Hope');
+    filterList.add('Conan Exiles');
+    filterList.add('Minecraft');
+
+
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -80,24 +92,21 @@ class _userListState extends State<UserList> {
                   future: dbGames.once(),
                   builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
                     if (snapshot.hasData) {
-                      return SingleChildScrollView(
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: new FirebaseAnimatedList(
-                                  shrinkWrap: true,
-                                  query: dbGames, itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
-                                return new GameTile(new Game(
-                                  id: snapshot.key,
-                                  name: snapshot.value["name"],
-                                ), myUser,
-                                );
-                              }),
-                              fit: FlexFit.tight,
-                              flex: 1,
+                      return StreamBuilder(
+                        stream: FirebaseFirestore.instance.collection('games').where('name', whereIn: filterList).snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (!snapshot.hasData) return new Center(child: CircularProgressIndicator());
+                          return SingleChildScrollView(
+                            child: new ListView(
+                              shrinkWrap: true,
+                              children: snapshot.data.docs.map((document) {
+                                return new GameTile(Game(
+                                  name: document['name'],
+                                ), myUser);
+                              }).toList(),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       );
                     }
                     return Center(child: CircularProgressIndicator());
@@ -128,56 +137,67 @@ class _userListState extends State<UserList> {
               });
             }
             return Center(
-                child: Column(
-                      children: [
-                        Flexible(
-                          child: new ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 1,
-                              itemBuilder: (BuildContext context, int index) {
-                                final item = userList[index].id;
+              child: Column(
+                children: [
+                  Flexible(
+                    child: new ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = userList[index].id;
 
-                                return new Dismissible(
-                                  key: Key(item),
-                                  onDismissed: (direction) {
-                                    if(direction == DismissDirection.startToEnd){
-                                      setState(() {
-                                        bool status = false;
-                                        like(status, myUser, userList[index]);
-                                        userList.removeAt(index);
-                                      });
-                                      Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
-                                    }
-                                    else if(direction == DismissDirection.endToStart){
-                                      setState(() {
-                                        bool status = false;
-                                        dislike(status, myUser, userList[index]);
-                                        userList.removeAt(index);
-                                      });
-                                      Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
-                                    }
+                          return new Dismissible(
+                            key: Key(item),
+                            onDismissed: (direction) {
+                              if(direction == DismissDirection.startToEnd){
+                                setState(() {
+                                  bool status = false;
+                                  like(status, myUser, userList[index]);
+                                  userList.removeAt(index);
+                                });
+                                Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
+                              }
+                              else if(direction == DismissDirection.endToStart){
+                                setState(() {
+                                  bool status = false;
+                                  dislike(status, myUser, userList[index]);
+                                  userList.removeAt(index);
+                                });
+                                Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
+                              }
 
 
-                                  },
-                                  child: UserTile(userList[index], () {
-                                    dismiss(index);
-                                  }),
-                                );
-                          }),
-                          fit: FlexFit.tight,
-                          flex: 1,
-                        ),
-                      ],
-                    ),
+                            },
+                            child: UserTile(userList[index], () {
+                              dismiss(index);
+                            }),
+                          );
+                        }),
+                    fit: FlexFit.tight,
+                    flex: 1,
+                  ),
+                ],
+              ),
             );
           }
           return Center(child: CircularProgressIndicator());
         },
       ),
-        backgroundColor: Colors.pink,
+      backgroundColor: Colors.pink,
     );
   }
+
+  Future<bool> futureFilter(String gameName) async {
+    bool newBool = await dbGames.orderByKey().equalTo(gameName).onValue.isEmpty;
+    return !newBool;
+  }
+
+  void filter(gameName) async {
+    filterBool = await futureFilter(gameName);
+  }
+
+
 
   void dismiss(int index) {
     setState(() {
@@ -199,3 +219,5 @@ bool checkUserList(List<User> userList) {
   }
 
 }
+
+
