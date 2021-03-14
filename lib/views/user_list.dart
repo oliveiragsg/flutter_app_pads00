@@ -53,22 +53,21 @@ class UserList extends StatefulWidget {
 }
 
 class _userListState extends State<UserList> {
+  void refresh() {
+    setState(() {});
+  }
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users').limitToFirst(3);
   final dbGames = FirebaseDatabase.instance.reference().child('games');
   final List<User> userList = [];
-  final List<User> filteredUserList = [];
-  final List<Game> gamesList = [];
   bool filterBool = false;
 
+
   List<String> filterList = [];
-  //final db = FirebaseFirestore.instance.collection('games').where('name', isEqualTo: ['Eternal Hope']);
+  //stream: FirebaseFirestore.instance.collection('games').where('name', whereIn: filterList).snapshots(),
 
   @override
   Widget build(BuildContext context) {
-    filterList.add('Eternal Hope');
-    filterList.add('Conan Exiles');
-    filterList.add('Minecraft');
 
 
     return Scaffold(
@@ -93,16 +92,17 @@ class _userListState extends State<UserList> {
                   builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
                     if (snapshot.hasData) {
                       return StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection('games').where('name', whereIn: filterList).snapshots(),
+                        stream: FirebaseFirestore.instance.collection('games').snapshots(),
                         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (!snapshot.hasData) return new Center(child: CircularProgressIndicator());
                           return SingleChildScrollView(
                             child: new ListView(
                               shrinkWrap: true,
                               children: snapshot.data.docs.map((document) {
-                                return new GameTile(Game(
-                                  name: document['name'],
-                                ), myUser);
+                                return FilterGameTileClass(
+                                  gameName: document['name'],
+                                  filterList: filterList,
+                                  callback: refresh,);
                               }).toList(),
                             ),
                           );
@@ -137,48 +137,38 @@ class _userListState extends State<UserList> {
               });
             }
             return Center(
-              child: Column(
-                children: [
-                  Flexible(
-                    child: new ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 1,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = userList[index].id;
+              child: new ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = userList[index].id;
 
-                          return new Dismissible(
-                            key: Key(item),
-                            onDismissed: (direction) {
-                              if(direction == DismissDirection.startToEnd){
-                                setState(() {
-                                  bool status = false;
-                                  like(status, myUser, userList[index]);
-                                  userList.removeAt(index);
-                                });
-                                Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
-                              }
-                              else if(direction == DismissDirection.endToStart){
-                                setState(() {
-                                  bool status = false;
-                                  dislike(status, myUser, userList[index]);
-                                  userList.removeAt(index);
-                                });
-                                Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
-                              }
-
-
-                            },
-                            child: UserTile(userList[index], () {
-                              dismiss(index);
-                            }),
-                          );
-                        }),
-                    fit: FlexFit.tight,
-                    flex: 1,
-                  ),
-                ],
-              ),
+                    return new Dismissible(
+                      key: Key(item),
+                      onDismissed: (direction) {
+                        if(direction == DismissDirection.startToEnd){
+                          setState(() {
+                            bool status = false;
+                            like(status, myUser, userList[index]);
+                            userList.removeAt(index);
+                          });
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
+                        }
+                        else if(direction == DismissDirection.endToStart){
+                          setState(() {
+                            bool status = false;
+                            dislike(status, myUser, userList[index]);
+                            userList.removeAt(index);
+                          });
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
+                        }
+                      },
+                      child: UserTile(userList[index], () {
+                        dismiss(index);
+                      }),
+                    );
+                  }),
             );
           }
           return Center(child: CircularProgressIndicator());
@@ -197,8 +187,6 @@ class _userListState extends State<UserList> {
     filterBool = await futureFilter(gameName);
   }
 
-
-
   void dismiss(int index) {
     setState(() {
       userList.removeAt(index);
@@ -206,8 +194,147 @@ class _userListState extends State<UserList> {
     Scaffold.of(context).showSnackBar(SnackBar(content: Text("${userList[index].id} dismissed")));
   }
 
+  Widget filterGameTile(String gameName) {
+    bool isSelected = false;
+
+    return TextButton(
+      style: TextButton.styleFrom(
+        elevation: 10,
+        side: BorderSide(color: Colors.black, width: 1),
+        backgroundColor: Colors.pinkAccent,
+        shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+      ),
+      child: Text(gameName,
+        style: TextStyle(
+        color: isSelected ? Colors.deepPurpleAccent : Colors.black,
+        fontSize: 20,
+        fontStyle: FontStyle.normal,
+        ),
+      ),
+      onPressed: () {
+        print(isSelected);
+        isSelected = true;
+        gameName = "teste";
+        setState(() {
+          print("---------------------");
+          print("Antes");
+          print(filterList.length);
+          print(filterList);
+          int size = filterList.length;
+          if(filterList.isNotEmpty) {
+            for(int index = 0; index < size; index++) {
+              print("Comparando " + filterList[index] + ' com o ' + gameName);
+              if(filterList[index] == gameName) {
+                print('Trueeeeeeeeeee');
+                filterList.removeAt(index);
+                print("Depois");
+                print(filterList.length);
+                print(filterList);
+                print("--------------------");
+                return;
+              }
+            }
+            print('Fallllllllllse');
+            filterList.add(gameName);
+            print("Depois");
+            print(filterList.length);
+            print(filterList);
+            print("--------------------");
+            return;
+          }
+          else {
+            print('Vaziooooooooo');
+            filterList.add(gameName);
+          }
+          print("Depois");
+          print(filterList.length);
+          print(filterList);
+          print("--------------------");
+        });
+      },
+    );
+  }
+
 }
 
+
+  class FilterGameTileClass extends StatefulWidget {
+    final String gameName;
+    final List<String> filterList;
+    final VoidCallback callback;
+    FilterGameTileClass({this.gameName, this.filterList, this.callback});
+
+    @override
+      _FilterGameTileClass createState() => _FilterGameTileClass();
+    }
+
+
+  class _FilterGameTileClass extends State<FilterGameTileClass> {
+
+  bool isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    var gameName = widget.gameName;
+    var filterList = widget.filterList;
+    return TextButton(
+      style: TextButton.styleFrom(
+        elevation: 10,
+        side: BorderSide(color: Colors.black, width: 1),
+        backgroundColor: Colors.pinkAccent,
+        shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+      ),
+      child: Text(gameName,
+        style: TextStyle(
+          color: isSelected ? Colors.deepPurpleAccent : Colors.black,
+          fontSize: 20,
+          fontStyle: FontStyle.normal,
+        ),
+      ),
+      onPressed: () {
+        print(isSelected);
+        isSelected ? isSelected = false : isSelected = true;
+        setState(() {
+          print("---------------------");
+          print("Antes");
+          print(filterList.length);
+          print(filterList);
+          int size = filterList.length;
+          if(filterList.isNotEmpty) {
+            for(int index = 0; index < size; index++) {
+              print("Comparando " + filterList[index] + ' com o ' + gameName);
+              if(filterList[index] == gameName) {
+                print('Trueeeeeeeeeee');
+                filterList.removeAt(index);
+                print("Depois");
+                print(filterList.length);
+                print(filterList);
+                print("--------------------");
+                return;
+              }
+            }
+            print('Fallllllllllse');
+            filterList.add(gameName);
+            print("Depois");
+            print(filterList.length);
+            print(filterList);
+            print("--------------------");
+            return;
+          }
+          else {
+            print('Vaziooooooooo');
+            filterList.add(gameName);
+          }
+          print("Depois");
+          print(filterList.length);
+          print(filterList);
+          print("--------------------");
+          widget.callback;
+        });
+      },
+    );
+  }
+}
 
 
 bool checkUserList(List<User> userList) {

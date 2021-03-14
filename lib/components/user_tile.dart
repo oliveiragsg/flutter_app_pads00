@@ -83,18 +83,21 @@ class UserTile extends StatelessWidget {
                               }
                             }
                           }
-                          return Flexible(
-                            child: ListView.builder(
-                              padding: const EdgeInsets.all(5),
-                              itemCount: user.games.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  height: 20,
-                                  color: Colors.white,
-                                  child: Center(child: Text(user.games[index].name),),
-                                );
-                              },
+                          return Column(
+                            children: [ Flexible(
+                              child: ListView.builder(
+                                padding: const EdgeInsets.all(5),
+                                itemCount: user.games.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    height: 20,
+                                    color: Colors.white,
+                                    child: Center(child: Text(user.games[index].name),),
+                                  );
+                                },
+                              ),
                             ),
+                          ],
                           );
                         },
                       ),
