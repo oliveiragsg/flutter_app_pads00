@@ -37,13 +37,10 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/components/game_tile.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app_pads00/components/user_tile.dart';
-import 'package:flutter_app_pads00/models/game.dart';
 import 'package:flutter_app_pads00/models/user.dart';
 
 class UserList extends StatefulWidget {
@@ -62,13 +59,17 @@ class _userListState extends State<UserList> {
   final List<User> userList = [];
   bool filterBool = false;
 
-
   List<String> filterList = [];
   //stream: FirebaseFirestore.instance.collection('games').where('name', whereIn: filterList).snapshots(),
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    isExec = false;
+  }
 
+  @override
+  Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
@@ -99,10 +100,12 @@ class _userListState extends State<UserList> {
                             child: new ListView(
                               shrinkWrap: true,
                               children: snapshot.data.docs.map((document) {
+                                bool isSelected = checkGameFilter(filterList, document['name']);
                                 return FilterGameTileClass(
                                   gameName: document['name'],
                                   filterList: filterList,
-                                  callback: refresh,);
+                                  callback: refresh,
+                                  isSelected: isSelected,);
                               }).toList(),
                             ),
                           );
@@ -214,42 +217,21 @@ class _userListState extends State<UserList> {
       onPressed: () {
         print(isSelected);
         isSelected = true;
-        gameName = "teste";
         setState(() {
-          print("---------------------");
-          print("Antes");
-          print(filterList.length);
-          print(filterList);
           int size = filterList.length;
           if(filterList.isNotEmpty) {
             for(int index = 0; index < size; index++) {
-              print("Comparando " + filterList[index] + ' com o ' + gameName);
               if(filterList[index] == gameName) {
-                print('Trueeeeeeeeeee');
                 filterList.removeAt(index);
-                print("Depois");
-                print(filterList.length);
-                print(filterList);
-                print("--------------------");
                 return;
               }
             }
-            print('Fallllllllllse');
             filterList.add(gameName);
-            print("Depois");
-            print(filterList.length);
-            print(filterList);
-            print("--------------------");
             return;
           }
           else {
-            print('Vaziooooooooo');
             filterList.add(gameName);
           }
-          print("Depois");
-          print(filterList.length);
-          print(filterList);
-          print("--------------------");
         });
       },
     );
@@ -257,12 +239,12 @@ class _userListState extends State<UserList> {
 
 }
 
-
   class FilterGameTileClass extends StatefulWidget {
     final String gameName;
     final List<String> filterList;
     final VoidCallback callback;
-    FilterGameTileClass({this.gameName, this.filterList, this.callback});
+    bool isSelected;
+    FilterGameTileClass({this.gameName, this.filterList, this.callback, this.isSelected});
 
     @override
       _FilterGameTileClass createState() => _FilterGameTileClass();
@@ -271,12 +253,13 @@ class _userListState extends State<UserList> {
 
   class _FilterGameTileClass extends State<FilterGameTileClass> {
 
-  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
+
     var gameName = widget.gameName;
     var filterList = widget.filterList;
+
     return TextButton(
       style: TextButton.styleFrom(
         elevation: 10,
@@ -286,49 +269,30 @@ class _userListState extends State<UserList> {
       ),
       child: Text(gameName,
         style: TextStyle(
-          color: isSelected ? Colors.deepPurpleAccent : Colors.black,
+          color: widget.isSelected ? Colors.deepPurpleAccent : Colors.black,
           fontSize: 20,
           fontStyle: FontStyle.normal,
         ),
       ),
       onPressed: () {
-        print(isSelected);
-        isSelected ? isSelected = false : isSelected = true;
+        isExec = true;
+        print(widget.isSelected);
+        widget.isSelected ? widget.isSelected = false : widget.isSelected = true;
         setState(() {
-          print("---------------------");
-          print("Antes");
-          print(filterList.length);
-          print(filterList);
           int size = filterList.length;
           if(filterList.isNotEmpty) {
             for(int index = 0; index < size; index++) {
-              print("Comparando " + filterList[index] + ' com o ' + gameName);
               if(filterList[index] == gameName) {
-                print('Trueeeeeeeeeee');
                 filterList.removeAt(index);
-                print("Depois");
-                print(filterList.length);
-                print(filterList);
-                print("--------------------");
                 return;
               }
             }
-            print('Fallllllllllse');
             filterList.add(gameName);
-            print("Depois");
-            print(filterList.length);
-            print(filterList);
-            print("--------------------");
             return;
           }
           else {
-            print('Vaziooooooooo');
             filterList.add(gameName);
           }
-          print("Depois");
-          print(filterList.length);
-          print(filterList);
-          print("--------------------");
           widget.callback;
         });
       },
@@ -344,7 +308,27 @@ bool checkUserList(List<User> userList) {
   else {
     return false;
   }
-
 }
 
+bool checkGameFilter(List<String> filterList, String gameName) {
+  int size = myUser.games.length;
+  for (int index = 0; index < size; index++) {
+    if(myUser.games[index].name == gameName && isExec == false) {
+      if(filterList.contains(gameName)) {
+        return true;
+      }
+      else {
+        filterList.add(gameName);
+        return true;
+      }
+    }
+    else {
+      if(filterList.contains(gameName)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
+bool isExec = false;
