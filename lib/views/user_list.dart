@@ -55,7 +55,6 @@ class _userListState extends State<UserList> {
   }
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users').limitToFirst(3);
-  final dbGames = FirebaseDatabase.instance.reference().child('games');
   final List<User> userList = [];
   bool filterBool = false;
 
@@ -88,31 +87,23 @@ class _userListState extends State<UserList> {
                       width: 4,
                     )
                 ),
-                child: FutureBuilder(
-                  future: dbGames.once(),
-                  builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-                    if (snapshot.hasData) {
-                      return StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection('games').snapshots(),
-                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData) return new Center(child: CircularProgressIndicator());
-                          return SingleChildScrollView(
-                            child: new ListView(
-                              shrinkWrap: true,
-                              children: snapshot.data.docs.map((document) {
-                                bool isSelected = checkGameFilter(filterList, document['name']);
-                                return FilterGameTileClass(
-                                  gameName: document['name'],
-                                  filterList: filterList,
-                                  callback: refresh,
-                                  isSelected: isSelected,);
-                              }).toList(),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                    return Center(child: CircularProgressIndicator());
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection('games').snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) return new Center(child: CircularProgressIndicator());
+                    return SingleChildScrollView(
+                      child: new ListView(
+                        shrinkWrap: true,
+                        children: snapshot.data.docs.map((document) {
+                          bool isSelected = checkGameFilter(filterList, document['name']);
+                          return FilterGameTileClass(
+                            gameName: document['name'],
+                            filterList: filterList,
+                            callback: refresh,
+                            isSelected: isSelected,);
+                        }).toList(),
+                      ),
+                    );
                   },
                 ),
               );
@@ -179,15 +170,6 @@ class _userListState extends State<UserList> {
       ),
       backgroundColor: Colors.pink,
     );
-  }
-
-  Future<bool> futureFilter(String gameName) async {
-    bool newBool = await dbGames.orderByKey().equalTo(gameName).onValue.isEmpty;
-    return !newBool;
-  }
-
-  void filter(gameName) async {
-    filterBool = await futureFilter(gameName);
   }
 
   void dismiss(int index) {

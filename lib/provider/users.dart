@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/games.dart';
@@ -10,8 +11,10 @@ import 'package:http/http.dart' as http;
 class Users with ChangeNotifier {
   static const _baseURL = 'https://flutter-app-pads00.firebaseio.com/';
   final dbUsers = FirebaseDatabase.instance.reference().child('users');
+  final dbUsers2 = FirebaseFirestore.instance.collection('users');
   final dbGames = FirebaseDatabase.instance.reference().child('games');
   List<User> loadedUsers = [];
+  List<User> loadedUsers2 = [];
   List<User> loadedUsersWithAfinity = [];
 
 
@@ -20,7 +23,14 @@ class Users with ChangeNotifier {
   }
 
   Future<void> putDB(User user, String userID) async {
-    dbUsers.child(userID).set({
+    print(user);
+    // dbUsers2.add({
+    //   "name": user.name,
+    //   "email": user.email,
+    //   "avatarURL": user.avatarURL,
+    //   "password": user.password,
+    // });
+    dbUsers2.doc(userID).set({
       "name": user.name,
       "email": user.email,
       "avatarURL": user.avatarURL,
@@ -28,11 +38,40 @@ class Users with ChangeNotifier {
     });
     fetchUsers();
     notifyListeners();
+    print(myUser.name);
+    print(myUser.id);
+    // dbUsers.child(userID).set({
+    //   "name": user.name,
+    //   "email": user.email,
+    //   "avatarURL": user.avatarURL,
+    //   "password": user.password,
+    // });
+    // fetchUsers();
+    // notifyListeners();
   }
 
 
   //Feito a partir deste tutorial: https://medium.com/flutterdevs/http-request-dcc13e885985
   Future <void> fetchUsers() async {
+    final List<User> downloadedUsers2 = [];
+    print("................................Teste de dbUsers2 começo");
+    await dbUsers2.get().then((value) =>
+    value.docs.forEach((element) {
+      //print(element.data());
+      downloadedUsers2.add(
+        User(
+            id: element.id, 
+            name: element.get("name").toString(),
+            email: element.get("email").toString(),
+            password: element.get("password").toString(),
+            avatarURL: element.get("avatarURL").toString(),
+        )
+      );
+    }));
+    loadedUsers2 = downloadedUsers2;
+    print(loadedUsers2.first.name);
+    print("Teste de dbUsers2 Fim...................................");
+
     final response = await http.get(
         'https://flutter-app-pads00.firebaseio.com/users.json'
     );
