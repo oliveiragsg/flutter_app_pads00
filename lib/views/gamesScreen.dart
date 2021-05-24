@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class GamesScreen extends StatefulWidget {
 class _GameScreenState extends State<GamesScreen> {
 
   final dbUsers = FirebaseDatabase.instance.reference().child('games');
+  final dbGames = FirebaseFirestore.instance.collection('games').snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -26,30 +28,43 @@ class _GameScreenState extends State<GamesScreen> {
         ),
         backgroundColor: Colors.redAccent,
       ),
-      body: FutureBuilder(
-        future: dbUsers.once(),
-        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-          if (snapshot.hasData) {
-            return SingleChildScrollView(
+      body: SingleChildScrollView(
               child: Row(
                 children: [
                   Flexible(
-                    child: new FirebaseAnimatedList(
-                        shrinkWrap: true,
-                        query: dbUsers, itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
-                      return new GameTile(new Game(
-                          id: snapshot.key,
-                          name: snapshot.value["name"],
-                        ), myUser,
-                      );
-                    }),
+                    child: new StreamBuilder(
+                        //FirebaseAnimatedList
+                        stream: dbGames,
+                        //shrinkWrap: true,
+                        //query: dbGames,
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if(!snapshot.hasData) {
+                            return CircularProgressIndicator();
+                          }
+                          return SingleChildScrollView(
+                            child: new ListView(
+                              shrinkWrap: true,
+                              children: snapshot.data.docs.map((document) {
+                                return new GameTile(new Game(
+                                  id: document.id,
+                                  name: document['name'],
+                                ), myUser,);
+                              }).toList(),
+                            ),
+                          );
+
+                        },
+                    //     itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
+                    //   return new GameTile(new Game(
+                    //       id: snapshot.key,
+                    //       name: snapshot.value["name"],
+                    //     ), myUser,
+                    //   );
+                    // }
+                    ),
                   ),
                 ],
               ),
-            );
-          }
-          return Center(child: CircularProgressIndicator());
-        },
       ),
       backgroundColor: Colors.pink,
     );

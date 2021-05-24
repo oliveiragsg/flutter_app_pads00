@@ -55,6 +55,7 @@ class _userListState extends State<UserList> {
   }
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users').limitToFirst(3);
+  final dbUsers2 = FirebaseFirestore.instance.collection('users').snapshots();
   final List<User> userList = [];
   bool filterBool = false;
 

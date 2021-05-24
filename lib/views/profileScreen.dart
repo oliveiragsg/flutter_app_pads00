@@ -75,12 +75,14 @@ class _profileScreenState extends State<profileScreen> {
   }
 
 
-   var avatar = myUser.avatarURL==null
+   var avatar = myUser.avatarURL == "null" || myUser.avatarURL == null || myUser.avatarURL.isEmpty
        ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
        : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
   // var avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
   //     ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
   //     : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
+
+
 
 
   @override

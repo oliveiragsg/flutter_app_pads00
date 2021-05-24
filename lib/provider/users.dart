@@ -519,7 +519,7 @@ class Users with ChangeNotifier {
   void addGame(User myOwnUser, Game addedGame) async {
 
     var dbUserAddedGame = await dbUsers2.doc(myOwnUser.id).collection('games').doc(addedGame.id).get();
-    if(dbUserAddedGame == null) {
+    if(!dbUserAddedGame.exists) {
       //Add the game to the user games database.
       dbUsers2.doc(myOwnUser.id).collection('games').doc(addedGame.id).set(
           {"name": addedGame.id});
