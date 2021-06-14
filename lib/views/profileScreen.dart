@@ -57,15 +57,16 @@ class _profileScreenState extends State<profileScreen> {
         print('URLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL');
         print(url);
 
-        Users().put(User(
+        await Users().putDB(User(
           id: myUser.id,
           name: myUser.name,
           email: myUser.email,
           password: myUser.password,
           avatarURL: url,
-        ));
+        ),
+        myUser.id);
 
-
+        //BUG: A IMAGEM SO ATUALIZA QUANDO SAI E VOLTA DESTA PAGINA.
 
       } else {
         print('No image selected.');
@@ -77,7 +78,7 @@ class _profileScreenState extends State<profileScreen> {
 
    var avatar = myUser.avatarURL == "null" || myUser.avatarURL == null || myUser.avatarURL.isEmpty
        ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
-       : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);
+       : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100);
   // var avatar = myUser.avatarURL==null || myUser.avatarURL.isEmpty
   //     ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
   //     : CircleAvatar(backgroundImage: NetworkImage(myUser.avatarURL, scale: 100), maxRadius: 100,);

@@ -24,23 +24,21 @@ class Users with ChangeNotifier {
   }
 
   Future<void> putDB(User user, String userID) async {
-    print(user);
     // dbUsers2.add({
     //   "name": user.name,
     //   "email": user.email,
     //   "avatarURL": user.avatarURL,
     //   "password": user.password,
     // });
-    dbUsers2.doc(userID).set({
+    await dbUsers2.doc(userID).set({
       "name": user.name,
       "email": user.email,
       "avatarURL": user.avatarURL,
       "password": user.password,
     });
-    fetchUsers();
+    myUser = user;
+    await fetchUsers();
     notifyListeners();
-    print(myUser.name);
-    print(myUser.id);
     // dbUsers.child(userID).set({
     //   "name": user.name,
     //   "email": user.email,
@@ -54,6 +52,9 @@ class Users with ChangeNotifier {
 
   //Feito a partir deste tutorial: https://medium.com/flutterdevs/http-request-dcc13e885985
   Future <void> fetchUsers() async {
+    print("URL IMAGE :::::::::::::::::::::::::::::::::::::::");
+    print(myUser.avatarURL);
+
     final List<User> downloadedUsers2 = [];
     print("................................Teste de dbUsers2 começo");
     await dbUsers2.get().then((value) =>
@@ -65,7 +66,7 @@ class Users with ChangeNotifier {
             name: element.get("name").toString(),
             email: element.get("email").toString(),
             password: element.get("password").toString(),
-            avatarURL: element.get("avatarURL").toString(),
+            //avatarURL: element.get("avatarURL").toString(),
         )
       );
     }));
@@ -101,9 +102,12 @@ class Users with ChangeNotifier {
     print(listGames.length);
     print(myUser.id);
     var userGames = await dbUsers2.doc(myUser.id).collection('games').get();
+    if(myUser.games.isNotEmpty) {
+         myUser.games.clear();
+       }
     if(userGames != null) {
       userGames.docs.forEach((game) {
-        if(myUser.games.contains(game.id)) {
+        if(myUser.games.contains(game)) {
           return;
         }
         else{
@@ -328,6 +332,7 @@ class Users with ChangeNotifier {
     //ANTIGO RETIRAR
   }
 
+  //ANTIGO RETIRAR
   Future<void> put(User user) async {
     if (user == null) {
       return;
@@ -358,6 +363,7 @@ class Users with ChangeNotifier {
     fetchUsers();
     notifyListeners();
   }
+  //ANTIGO RETIRAR
 
   void remove(User user) {
     if (user != null && user.id != null) {
@@ -522,9 +528,9 @@ class Users with ChangeNotifier {
     if(!dbUserAddedGame.exists) {
       //Add the game to the user games database.
       dbUsers2.doc(myOwnUser.id).collection('games').doc(addedGame.id).set(
-          {"name": addedGame.id});
+          {"name": addedGame.name});
       //Add the game to the local user games database.
-      myOwnUser.games.add(Game(id: addedGame.id, name: addedGame.name));
+      myOwnUser.games.add(addedGame);
       //Add the user to the game users database.
       dbGames2.doc(addedGame.id).collection("users").doc(myOwnUser.id).set({
         "email": myOwnUser.email,
@@ -534,7 +540,7 @@ class Users with ChangeNotifier {
       //Remove the game from the user games database
       dbUsers2.doc(myOwnUser.id).collection("games").doc(addedGame.id).delete();
       //Remove the game from the local user games database.
-      myOwnUser.games.remove(Game(id: addedGame.id, name: addedGame.name));
+      myOwnUser.games.remove(addedGame);
       //Remove the user from the game users database.
       dbGames2.doc(addedGame.id).collection("users").doc(myOwnUser.id).delete();
     }

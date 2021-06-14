@@ -37,14 +37,15 @@ class UserForm extends StatelessWidget {
             icon: Icon(Icons.save),
             onPressed: () {
               _form.currentState.save();
-             Provider.of<Users>(context, listen:false).put(
+              Provider.of<Users>(context, listen:false).putDB(
                 User(
                   id: _formData['id'],
                   name: _formData['name'],
                   email: _formData['email'],
                   password: _formData['password'],
                   avatarURL: _formData['avatarURL'],
-                )
+                ),
+                _formData['id'],
               );
              myUser = User(
                id: _formData['id'],
