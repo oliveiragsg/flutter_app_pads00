@@ -387,14 +387,21 @@ class Users with ChangeNotifier {
   }
 
   void like(User myOwnUser, User likedUser) async {
+
+
     int totalSize = myOwnUser.likes.length;
 
+
+    print(totalSize);
     for (int count = 0; count < totalSize; count++) {
-      if (myOwnUser.likes.elementAt(count).id == likedUser.id) {
+      if (myOwnUser.likes
+          .elementAt(count)
+          .id == likedUser.id) {
         return;
       }
+    }
 
-      await dbUsers2.doc(myOwnUser.id).collection('likes').add({
+      await dbUsers2.doc(myOwnUser.id).collection('likes').doc(likedUser.id).set({
         'userID': likedUser.id,
         'name': likedUser.name,
         'email': likedUser.email,
@@ -402,13 +409,13 @@ class Users with ChangeNotifier {
       });
 
       if (await isMatch(myUser, likedUser) == true) {
-        await dbUsers2.doc(myOwnUser.id).collection('matchs').add({
+        await dbUsers2.doc(myOwnUser.id).collection('matchs').doc(likedUser.id).set({
           'userID': likedUser.id,
           'name': likedUser.name,
           'email': likedUser.email,
           'password': likedUser.password,
         });
-        await dbUsers2.doc(likedUser.id).collection('matchs').add({
+        await dbUsers2.doc(likedUser.id).collection('matchs').doc(myOwnUser.id).set({
           'userID': myOwnUser.id,
           'name': myOwnUser.name,
           'email': myOwnUser.email,
@@ -460,8 +467,8 @@ class Users with ChangeNotifier {
       //
       // fetchUsers();
       //ANTIGO RETIRAR
-    }
   }
+
 
   Future<bool> isMatch(User myUser, User likedUser) async {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -475,7 +482,10 @@ class Users with ChangeNotifier {
 
     var isMatch = await dbUsers2.doc(likedUser.id).collection('likes').doc(myUser.id).get();
 
-    if(isMatch != null) {
+    print("ISMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATCH");
+    print(isMatch.exists);
+
+    if(isMatch.exists) {
       return true;
     }
     else {

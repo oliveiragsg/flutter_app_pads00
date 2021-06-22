@@ -50,6 +50,7 @@
 //
 //
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
@@ -64,8 +65,7 @@ import 'package:provider/provider.dart';
 class PartnersScreen extends StatelessWidget {
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users/' + myUser.id + "/matchs");
-
-
+  final dbUsers2 = FirebaseFirestore.instance.collection('users').doc(myUser.id).collection('matchs').snapshots();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,31 +76,28 @@ class PartnersScreen extends StatelessWidget {
         backgroundColor: Colors.redAccent,
         automaticallyImplyLeading: false,
       ),
-      body: FutureBuilder(
-        future: dbUsers.once(),
-        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+      body: StreamBuilder(
+        stream: dbUsers2,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             return SingleChildScrollView(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: new FirebaseAnimatedList(
-                        shrinkWrap: true,
-                        query: dbUsers, itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                        child: new PartnerTile(
-                            User(
-                              id: snapshot.key,
-                              name: snapshot.value["name"],
-                              email: snapshot.value["email"],
-                              password: snapshot.value["password"],
-                              avatarURL: snapshot.value["avatarURL"],)
-                        ),
-                      );
-                    }),
-                  ),
-                ],
+              child: new ListView(
+                shrinkWrap: true,
+                children: snapshot.data.docs.map((document) {
+                  var data = document.data();
+                    return Container(
+                      padding: const EdgeInsets.all(3.0),
+                      child: new PartnerTile(
+                          User(
+                            id: document.id,
+                            name: data["name"],
+                            email: data["email"],
+                            password: data["password"],
+                            avatarURL: data["avatarURL"],
+                          )
+                      ),
+                    );
+                  }).toList(),
               ),
             );
           }

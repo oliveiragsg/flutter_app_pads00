@@ -114,23 +114,35 @@ class _userListState extends State<UserList> {
         backgroundColor: Colors.redAccent,
         automaticallyImplyLeading: false,
       ),
-      body: FutureBuilder(
-        future: dbUsers.once(),
-        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+      body: StreamBuilder(
+        stream: dbUsers2,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
-            Map<dynamic, dynamic> values = snapshot.data.value;
+            //Map<dynamic, dynamic> values = snapshot.data.value;
             bool checkList = checkUserList(userList);
-            if(checkList == true){
-              values.forEach((key, value) {
+            print(checkList);
+            if(checkList){
+              snapshot.data.docs.map((document) {
                 userList.add(User(
-                  id: key,
-                  name: value["name"],
-                  email: value["email"],
-                  password: value["password"],
-                  avatarURL: value["avatarURL"],
+                  id: document.id,
+                  name: document["name"],
+                  email: document["email"],
+                  password: document["password"],
+                  avatarURL: document["avatarURL"],
                 ));
-              });
+              }).toList();
             }
+            // if(checkList == true){
+            //   values.forEach((key, value) {
+            //     userList.add(User(
+            //       id: key,
+            //       name: value["name"],
+            //       email: value["email"],
+            //       password: value["password"],
+            //       avatarURL: value["avatarURL"],
+            //     ));
+            //   });
+            // }
             return Center(
               child: new ListView.builder(
                   shrinkWrap: true,
@@ -177,7 +189,7 @@ class _userListState extends State<UserList> {
     setState(() {
       userList.removeAt(index);
     });
-    Scaffold.of(context).showSnackBar(SnackBar(content: Text("${userList[index].id} dismissed")));
+    //Scaffold.of(context).showSnackBar(SnackBar(content: Text("${userList[index].id} dismissed")));
   }
 
   Widget filterGameTile(String gameName) {
