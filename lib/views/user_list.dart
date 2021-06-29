@@ -52,20 +52,41 @@ class UserList extends StatefulWidget {
 class _userListState extends State<UserList> {
   void refresh() {
     setState(() {});
+    print("Funfou essa merda");
+  }
+
+  void GetUserGames() {
+    filterList.clear();
+    int totalGames = myUser.games.length;
+    for(int i = 0; i < totalGames; i++) {
+      filterList.add(myUser.games.elementAt(i).name);
+    }
+    // FirebaseFirestore.instance.collection('games').get().then((querySnapshot) {
+    //   querySnapshot.docs.forEach((document) {
+    //     checkGameFilter(filterList, document['name']);
+    //   });
+    //});
+    for(int i = 0; i < totalGames; i++) {
+      print(myUser.games.elementAt(i).name);
+    }
+    print(filterList);
   }
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users').limitToFirst(3);
   final dbUsers2 = FirebaseFirestore.instance.collection('users').snapshots();
+  final dbGames = FirebaseFirestore.instance.collection('games').snapshots();
   final List<User> userList = [];
   bool filterBool = false;
 
   List<String> filterList = [];
   //stream: FirebaseFirestore.instance.collection('games').where('name', whereIn: filterList).snapshots(),
+  //FirebaseFirestore.instance.collection('games').where('name', whereIn: filterList).firestore.collection("users").snapshots()
 
   @override
   void initState() {
     super.initState();
     isExec = false;
+    GetUserGames();
   }
 
   @override
@@ -89,7 +110,7 @@ class _userListState extends State<UserList> {
                     )
                 ),
                 child: StreamBuilder(
-                  stream: FirebaseFirestore.instance.collection('games').snapshots(),
+                  stream: dbGames,
                   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (!snapshot.hasData) return new Center(child: CircularProgressIndicator());
                     return SingleChildScrollView(
@@ -115,7 +136,7 @@ class _userListState extends State<UserList> {
         automaticallyImplyLeading: false,
       ),
       body: StreamBuilder(
-        stream: dbUsers2,
+        stream: FirebaseFirestore.instance.collection('games').where('name', isEqualTo: filterList).firestore.collection("users").snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             //Map<dynamic, dynamic> values = snapshot.data.value;
@@ -125,12 +146,15 @@ class _userListState extends State<UserList> {
               snapshot.data.docs.map((document) {
                 userList.add(User(
                   id: document.id,
-                  name: document["name"],
-                  email: document["email"],
-                  password: document["password"],
-                  avatarURL: document["avatarURL"],
+                  name: document.data()["name"],
+                  email: document.data()["email"],
+                  password: document.data()["password"],
+                  avatarURL: document.data()["avatarURL"],
                 ));
               }).toList();
+            }
+            for(int i = 0; i < userList.length; i++) {
+              print(userList.elementAt(i).name);
             }
             // if(checkList == true){
             //   values.forEach((key, value) {
@@ -213,6 +237,7 @@ class _userListState extends State<UserList> {
         print(isSelected);
         isSelected = true;
         setState(() {
+          print(filterList);
           int size = filterList.length;
           if(filterList.isNotEmpty) {
             for(int index = 0; index < size; index++) {

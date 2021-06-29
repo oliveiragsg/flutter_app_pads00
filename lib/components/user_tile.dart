@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
@@ -18,6 +19,7 @@ class UserTile extends StatelessWidget {
           : CircleAvatar(backgroundImage: NetworkImage(user.avatarURL), maxRadius: 100,);
 
     final dbUserGames = FirebaseDatabase.instance.reference().child("users/" + user.id + "/games");
+    final dbUserGames2 = FirebaseFirestore.instance.collection("users").doc(user.id).collection("games").snapshots();
 
     return Row(
       children: [
@@ -67,21 +69,21 @@ class UserTile extends StatelessWidget {
                     child: SizedBox(
                       width: 200,
                       height: 150,
-                      child: FutureBuilder(
-                        future: dbUserGames.once(),
-                        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+                      child: StreamBuilder(
+                        stream: dbUserGames2,
+                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if(snapshot.hasData) {
-                            Map<dynamic, dynamic> values = snapshot.data.value;
-                            if(user.games.isEmpty) {
-                              if(values != null) {
-                                values.forEach((key, value) {
-                                  user.games.add(Game(
-                                    id: key,
-                                    name: value["name"],
-                                  ));
-                                });
+                            snapshot.data.docs.map((document) {
+                              if(user.games.isEmpty) {
+                                if(document != null) {
+                                    user.games.add(Game(
+                                      id: document.id,
+                                      name: document["name"],
+                                    ));
+                                }
                               }
-                            }
+                            }).toList();
+
                           }
                           return Column(
                             children: [ Flexible(
