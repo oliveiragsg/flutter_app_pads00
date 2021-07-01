@@ -52,7 +52,6 @@ class UserList extends StatefulWidget {
 class _userListState extends State<UserList> {
   void refresh() {
     setState(() {});
-    print("Funfou essa merda");
   }
 
   void GetUserGames() {
@@ -85,11 +84,6 @@ class _userListState extends State<UserList> {
     //     checkGameFilter(filterList, document['name']);
     //   });
     //});
-    for(int i = 0; i < totalGames; i++) {
-      print(myUser.games.elementAt(i).name);
-    }
-    print(filterList);
-    print(userList2);
   }
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users').limitToFirst(3);
@@ -113,6 +107,7 @@ class _userListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
 
+
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -120,7 +115,6 @@ class _userListState extends State<UserList> {
         ),
         actions: [
           IconButton(icon: Icon(Icons.list, size: 35, color: Colors.white,), onPressed: () {
-            print(userList2);
             showModalBottomSheet(context: context, builder: (BuildContext context) {
               return Container(
                 height: 500,
@@ -158,12 +152,11 @@ class _userListState extends State<UserList> {
         automaticallyImplyLeading: false,
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('games').where("name", whereIn: filterList).firestore.collection("users").snapshots(),
+        stream: FirebaseFirestore.instance.collection('users').where("games", arrayContainsAny: filterList).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             //Map<dynamic, dynamic> values = snapshot.data.value;
             bool checkList = checkUserList(userList);
-            print(checkList);
             if(checkList){
               snapshot.data.docs.map((document) {
                 userList.add(User(
@@ -174,9 +167,6 @@ class _userListState extends State<UserList> {
                   avatarURL: document.data()["avatarURL"],
                 ));
               }).toList();
-            }
-            for(int i = 0; i < userList.length; i++) {
-              print(userList.elementAt(i).name);
             }
             // if(checkList == true){
             //   values.forEach((key, value) {
@@ -256,10 +246,8 @@ class _userListState extends State<UserList> {
         ),
       ),
       onPressed: () {
-        print(isSelected);
         isSelected = true;
         setState(() {
-          print(filterList);
           int size = filterList.length;
           if(filterList.isNotEmpty) {
             for(int index = 0; index < size; index++) {
@@ -318,7 +306,6 @@ class _userListState extends State<UserList> {
       ),
       onPressed: () {
         isExec = true;
-        print(widget.isSelected);
         widget.isSelected ? widget.isSelected = false : widget.isSelected = true;
         setState(() {
           int size = filterList.length;

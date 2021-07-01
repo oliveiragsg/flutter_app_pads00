@@ -91,37 +91,30 @@ class Users with ChangeNotifier {
 
     //Carregar os games para a lista local do myUser
 
-    final List<Game> listGames = [];
-    var dbUsersAddedGame = await dbUsers2.doc(myUser.id).get();
-    //var userGames2 = dbUsersAddedGame.data().containsKey("games");
-    //var userGames = await dbUsers2.doc(myUser.id).collection('games').get();
-    if(myUser.games.isNotEmpty) {
-         myUser.games.clear();
-       }
-    if(dbUsersAddedGame.data().containsKey("games")) {
-      List<dynamic> games = dbUsersAddedGame.get("games");
-      print("NAO SE PERDE CARAAAAAAAAAAAAAAAAAAAAAI");
-      games.forEach((game) {
-        print(game);
-        print(myUser.games.contains(game));
-        List<String> test = [];
-        for(int i = 0; i < myUser.games.length; i++) {
-          test.add(myUser.games.elementAt(i).name);
-        }
-        print(test);
-        if (myUser.games.contains(game)) {
-          return;
-        }
-        else {
-          myUser.games.add(
-              Game(
-                id: game,
-                name: game,
-              )
-          );
-        }
-      });
+
+    if(myUser.id != null) {
+      var dbUsersAddedGame = await dbUsers2.doc(myUser.id).get();
+      if(myUser.games.isNotEmpty) {
+        myUser.games.clear();
+      }
+      if(dbUsersAddedGame.data().containsKey("games")) {
+        List<dynamic> games = dbUsersAddedGame.get("games");
+        games.forEach((game) {
+          if (myUser.games.contains(game)) {
+            return;
+          }
+          else {
+            myUser.games.add(
+                Game(
+                  id: game,
+                  name: game,
+                )
+            );
+          }
+        });
+      }
     }
+
 
 
 

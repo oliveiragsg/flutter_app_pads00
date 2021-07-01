@@ -21,6 +21,7 @@ class UserTile extends StatelessWidget {
     final dbUserGames = FirebaseDatabase.instance.reference().child("users/" + user.id + "/games");
     final dbUserGames2 = FirebaseFirestore.instance.collection("users").doc(user.id).collection("games").snapshots();
 
+
     return Row(
       children: [
         Container(
