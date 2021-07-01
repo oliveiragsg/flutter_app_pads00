@@ -61,6 +61,25 @@ class _userListState extends State<UserList> {
     for(int i = 0; i < totalGames; i++) {
       filterList.add(myUser.games.elementAt(i).name);
     }
+    for(int i = 0; i < myUser.games.length; i++) {
+      String gameName = myUser.games.elementAt(i).name;
+      FirebaseFirestore.instance.collection("games").doc(gameName).collection("users").get().then((querySnapshot) {
+        querySnapshot.docs.forEach((document) {
+          userList2.add(User(
+            id: document.id,
+            name: document.data()["name"],
+            email: document.data()["email"],
+            password: document.data()["password"],
+            avatarURL: document.data()["avatarURL"],
+          ));
+        });
+      });
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+    //Para continuar depois
+    // A melhor forma possivel para fazer isso e chamar essa função aqui de getUsers de forma asyncrona, enquanto ela espera fica rodando o carregamento, circulo de carregamento.
+    // Ai o que ela faz e que ela carrega os usuarios de cada um dos jogos do filtro, separadamente e coloca tudo na lista de usuarios. e Ai é que manda para o widget buildar.
+
     // FirebaseFirestore.instance.collection('games').get().then((querySnapshot) {
     //   querySnapshot.docs.forEach((document) {
     //     checkGameFilter(filterList, document['name']);
@@ -70,12 +89,14 @@ class _userListState extends State<UserList> {
       print(myUser.games.elementAt(i).name);
     }
     print(filterList);
+    print(userList2);
   }
 
   final dbUsers = FirebaseDatabase.instance.reference().child('users').limitToFirst(3);
   final dbUsers2 = FirebaseFirestore.instance.collection('users').snapshots();
   final dbGames = FirebaseFirestore.instance.collection('games').snapshots();
   final List<User> userList = [];
+  final List<User> userList2 = [];
   bool filterBool = false;
 
   List<String> filterList = [];
@@ -99,6 +120,7 @@ class _userListState extends State<UserList> {
         ),
         actions: [
           IconButton(icon: Icon(Icons.list, size: 35, color: Colors.white,), onPressed: () {
+            print(userList2);
             showModalBottomSheet(context: context, builder: (BuildContext context) {
               return Container(
                 height: 500,
@@ -136,7 +158,7 @@ class _userListState extends State<UserList> {
         automaticallyImplyLeading: false,
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('games').where('name', isEqualTo: filterList).firestore.collection("users").snapshots(),
+        stream: FirebaseFirestore.instance.collection('games').where("name", whereIn: filterList).firestore.collection("users").snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             //Map<dynamic, dynamic> values = snapshot.data.value;
@@ -146,7 +168,7 @@ class _userListState extends State<UserList> {
               snapshot.data.docs.map((document) {
                 userList.add(User(
                   id: document.id,
-                  name: document.data()["name"],
+                  name: document.data()['name'],
                   email: document.data()["email"],
                   password: document.data()["password"],
                   avatarURL: document.data()["avatarURL"],

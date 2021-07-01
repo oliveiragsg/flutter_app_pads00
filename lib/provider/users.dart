@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_pads00/data/games.dart';
 import 'package:flutter_app_pads00/data/myUser.dart';
 import 'package:flutter_app_pads00/models/game.dart';
 import 'package:flutter_app_pads00/models/user.dart';
@@ -52,14 +51,10 @@ class Users with ChangeNotifier {
 
   //Feito a partir deste tutorial: https://medium.com/flutterdevs/http-request-dcc13e885985
   Future <void> fetchUsers() async {
-    print("URL IMAGE :::::::::::::::::::::::::::::::::::::::");
-    print(myUser.avatarURL);
 
     final List<User> downloadedUsers2 = [];
-    print("................................Teste de dbUsers2 começo");
     await dbUsers2.get().then((value) =>
     value.docs.forEach((element) {
-      //print(element.data());
       downloadedUsers2.add(
         User(
             id: element.id, 
@@ -71,8 +66,6 @@ class Users with ChangeNotifier {
       );
     }));
     loadedUsers2 = downloadedUsers2;
-    print(loadedUsers2.first.email);
-    print("Teste de dbUsers2 Fim...................................");
 
     //ANTIGO RETIRAR
     // final response = await http.get(
@@ -99,41 +92,36 @@ class Users with ChangeNotifier {
     //Carregar os games para a lista local do myUser
 
     final List<Game> listGames = [];
-    print(listGames.length);
-    print(myUser.id);
-    var userGames = await dbUsers2.doc(myUser.id).collection('games').get();
+    var dbUsersAddedGame = await dbUsers2.doc(myUser.id).get();
+    //var userGames2 = dbUsersAddedGame.data().containsKey("games");
+    //var userGames = await dbUsers2.doc(myUser.id).collection('games').get();
     if(myUser.games.isNotEmpty) {
          myUser.games.clear();
        }
-    if(userGames != null) {
-      userGames.docs.forEach((game) {
-        if(myUser.games.contains(game)) {
+    if(dbUsersAddedGame.data().containsKey("games")) {
+      List<dynamic> games = dbUsersAddedGame.get("games");
+      print("NAO SE PERDE CARAAAAAAAAAAAAAAAAAAAAAI");
+      games.forEach((game) {
+        print(game);
+        print(myUser.games.contains(game));
+        List<String> test = [];
+        for(int i = 0; i < myUser.games.length; i++) {
+          test.add(myUser.games.elementAt(i).name);
+        }
+        print(test);
+        if (myUser.games.contains(game)) {
           return;
         }
-        else{
+        else {
           myUser.games.add(
               Game(
-                id: game.id,
-                name: game.get("name").toString(),
+                id: game,
+                name: game,
               )
           );
         }
-        // listGames.add(
-        //     Game(
-        //       id: game.id,
-        //       name: game.get("name").toString(),
-        //       )
-        //     );
-        });
-      // if(myUser.games.isNotEmpty) {
-      //   myUser.games.clear();
-      // }
-      // int totalGames = listGames.length;
-      // for (int count = 0; count < totalGames; count++) {
-      //   myUser.games.add(listGames.elementAt(count));
-      // }
-      // print(listGames.length);
-      }
+      });
+    }
 
 
 
@@ -174,7 +162,6 @@ class Users with ChangeNotifier {
     //Carregar os likes para a lista local do myUser
 
     final List<User> listUserLikes = [];
-    print(listUserLikes.length);
     var userLikes = await dbUsers2.doc(myUser.id).collection('likes').get();
     if(userLikes != null) {
       userLikes.docs.forEach((user) {
@@ -227,7 +214,6 @@ class Users with ChangeNotifier {
 
     //Carregar os matchs para a lista local do myUser
     final List<User> listUserMatchs = [];
-    print(listUserMatchs.length);
     var userMatchs = await dbUsers2.doc(myUser.id).collection('matchs').get();
     if(userMatchs != null) {
       userMatchs.docs.forEach((user) {
@@ -392,7 +378,6 @@ class Users with ChangeNotifier {
     int totalSize = myOwnUser.likes.length;
 
 
-    print(totalSize);
     for (int count = 0; count < totalSize; count++) {
       if (myOwnUser.likes
           .elementAt(count)
@@ -482,9 +467,6 @@ class Users with ChangeNotifier {
 
     var isMatch = await dbUsers2.doc(likedUser.id).collection('likes').doc(myUser.id).get();
 
-    print("ISMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATCH");
-    print(isMatch.exists);
-
     if(isMatch.exists) {
       return true;
     }
@@ -533,12 +515,16 @@ class Users with ChangeNotifier {
 
   // Games
   void addGame(User myOwnUser, Game addedGame) async {
-
-    var dbUserAddedGame = await dbUsers2.doc(myOwnUser.id).collection('games').doc(addedGame.id).get();
-    if(!dbUserAddedGame.exists) {
+    var dbUsersAddedGame = await dbUsers2.doc(myOwnUser.id).get();
+    List<String> gameToAdd = [addedGame.id];
+    List<dynamic> listGames = [];
+    if (dbUsersAddedGame.data().containsKey("games")) {
+      listGames = dbUsersAddedGame.get("games");
+    }
+    
+    if(!listGames.contains(addedGame.id)) {
       //Add the game to the user games database.
-      dbUsers2.doc(myOwnUser.id).collection('games').doc(addedGame.id).set(
-          {"name": addedGame.name});
+      dbUsers2.doc(myOwnUser.id).update({"games": FieldValue.arrayUnion(gameToAdd)});
       //Add the game to the local user games database.
       myOwnUser.games.add(addedGame);
       //Add the user to the game users database.
@@ -548,7 +534,7 @@ class Users with ChangeNotifier {
     }
     else {
       //Remove the game from the user games database
-      dbUsers2.doc(myOwnUser.id).collection("games").doc(addedGame.id).delete();
+      dbUsers2.doc(myOwnUser.id).update({"games": FieldValue.arrayRemove(gameToAdd)});
       //Remove the game from the local user games database.
       myOwnUser.games.remove(addedGame);
       //Remove the user from the game users database.
