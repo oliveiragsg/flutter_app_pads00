@@ -574,6 +574,18 @@ class Users with ChangeNotifier {
     //ANTIGO RETIRAR
   }
 
+  Future<List> getGames(User myOwnUser) async {
+    var dbUsersAddedGame = await dbUsers2.doc(myOwnUser.id).get();
+    List<dynamic> listGames = [];
+    if (dbUsersAddedGame.data().containsKey("games")) {
+      listGames = dbUsersAddedGame.get("games");
+      return listGames;
+    }
+    else {
+      return null;
+    }
+  }
+
   Future<bool> alreadyAddedDB(User myUser, Game game) async {
     var dbUserGames2 = await dbUsers2.doc(myUser.id).collection('games').get();
 

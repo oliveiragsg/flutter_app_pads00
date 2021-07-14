@@ -18,9 +18,6 @@ class UserTile extends StatelessWidget {
         ? CircleAvatar(child: Icon(Icons.person, size: 100,), minRadius: 100)
           : CircleAvatar(backgroundImage: NetworkImage(user.avatarURL), maxRadius: 100,);
 
-    final dbUserGames = FirebaseDatabase.instance.reference().child("users/" + user.id + "/games");
-    final dbUserGames2 = FirebaseFirestore.instance.collection("users").doc(user.id).collection("games").snapshots();
-
 
     return Row(
       children: [
@@ -71,38 +68,38 @@ class UserTile extends StatelessWidget {
                       width: 200,
                       height: 150,
                       child: StreamBuilder(
-                        stream: dbUserGames2,
-                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        stream: Users().getGames(user).asStream(),
+                        builder: (context, snapshot) {
                           if(snapshot.hasData) {
-                            snapshot.data.docs.map((document) {
-                              if(user.games.isEmpty) {
-                                if(document != null) {
-                                    user.games.add(Game(
-                                      id: document.id,
-                                      name: document["name"],
-                                    ));
-                                }
-                              }
-                            }).toList();
-
+                            user.games.clear();
+                            List<dynamic> tempGameList = snapshot.data;
+                            int total = tempGameList.length;
+                            for(int i = 0; i < total; i++) {
+                              user.games.add(
+                                  Game(id: tempGameList.elementAt(i),
+                                    name: tempGameList.elementAt(i),
+                              )
+                              );
+                            }
                           }
+
                           return Column(
-                            children: [ Flexible(
-                              child: ListView.builder(
-                                padding: const EdgeInsets.all(5),
-                                itemCount: user.games.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    height: 20,
-                                    color: Colors.white,
-                                    child: Center(child: Text(user.games[index].name),),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
+                                children: [ Flexible(
+                                  child: ListView.builder(
+                                    padding: const EdgeInsets.all(5),
+                                    itemCount: user.games.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return Container(
+                                        height: 20,
+                                        color: Colors.white,
+                                        child: Center(child: Text(user.games[index].name),),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                           );
-                        },
+                        }
                       ),
                     ),
                   ),
