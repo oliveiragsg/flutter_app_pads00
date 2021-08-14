@@ -17,6 +17,7 @@ class UserList extends StatefulWidget {
 class _userListState extends State<UserList> {
   void refresh() {
     print("REFRESH");
+    getQuery();
     setState(() {
 
   });
@@ -55,6 +56,8 @@ class _userListState extends State<UserList> {
   //final List<User> userList2 = [];
   bool filterBool = false;
   int _limit = 3;
+  var stream;
+  Stream myStream = Stream.empty();
 
 
 
@@ -70,10 +73,85 @@ class _userListState extends State<UserList> {
     super.initState();
     isExec = false;
     GetUserGames();
+    getQuery();
   }
+
+  Stream<QuerySnapshot> newStream() {
+    getQuery();
+    return Stream.periodic(Duration(seconds: 1), (i) => qShot);
+  }
+
+  QuerySnapshot qShot;
+
+  Future<void> getQuery() async {
+    //Para fazer mais de um filtro, por exemplo, filtro de games, e filtro de idade, e so voce adicionar outros where. ex:
+    //myStream = FirebaseFirestore.instance.collection('users').where("games", arrayContainsAny: filterList).where("age", isEqualTo: age).limit(_limit).snapshots();
+    myStream = FirebaseFirestore.instance.collection('users').where("games", arrayContainsAny: filterList).limit(_limit).snapshots();
+    qShot = await FirebaseFirestore.instance.collection('users').where("games", arrayContainsAny: filterList).limit(_limit).get();
+  }
+
+  //stream: FirebaseFirestore.instance.collection('users').where("games", arrayContainsAny: filterList).limit(_limit).snapshots(),
 
   @override
   Widget build(BuildContext context) {
+
+    var usersStream = StreamBuilder(
+      stream: myStream,
+      builder: (context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasData) {
+          bool checkList = checkUserList(userList);
+          if(checkList){
+            snapshot.data.docs.map((document) {
+              userList.add(User(
+                id: document.id,
+                name: document.data()['name'],
+                email: document.data()["email"],
+                password: document.data()["password"],
+                avatarURL: document.data()["avatarURL"],
+              ));
+            }).toList().shuffle();
+          }
+          return Center(
+            child: SizedBox(
+              height: 500.0,
+              child: new ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = userList[index].id;
+
+                    return new Dismissible(
+                      key: Key(item),
+                      onDismissed: (direction) {
+                        if(direction == DismissDirection.startToEnd){
+                          setState(() {
+                            bool status = false;
+                            like(status, myUser, userList[index]);
+                            userList.removeAt(index);
+                          });
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
+                        }
+                        else if(direction == DismissDirection.endToStart){
+                          setState(() {
+                            bool status = false;
+                            dislike(status, myUser, userList[index]);
+                            userList.removeAt(index);
+                          });
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
+                        }
+                      },
+                      child: UserTile(userList[index], () {
+                        dismiss(index);
+                      }),
+                    );
+                  }),
+            ),
+          );
+        }
+        return Center(child: CircularProgressIndicator());
+      },
+    );
 
 
     return Scaffold(
@@ -119,60 +197,7 @@ class _userListState extends State<UserList> {
         backgroundColor: Colors.redAccent,
         automaticallyImplyLeading: false,
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('users').where("games", arrayContainsAny: filterList).limit(_limit).snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasData) {
-            bool checkList = checkUserList(userList);
-            if(checkList){
-              snapshot.data.docs.map((document) {
-                userList.add(User(
-                  id: document.id,
-                  name: document.data()['name'],
-                  email: document.data()["email"],
-                  password: document.data()["password"],
-                  avatarURL: document.data()["avatarURL"],
-                ));
-              }).toList().shuffle();
-            }
-            return Center(
-              child: new ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = userList[index].id;
-
-                    return new Dismissible(
-                      key: Key(item),
-                      onDismissed: (direction) {
-                        if(direction == DismissDirection.startToEnd){
-                          setState(() {
-                            bool status = false;
-                            like(status, myUser, userList[index]);
-                            userList.removeAt(index);
-                          });
-                          Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item Liked")));
-                        }
-                        else if(direction == DismissDirection.endToStart){
-                          setState(() {
-                            bool status = false;
-                            dislike(status, myUser, userList[index]);
-                            userList.removeAt(index);
-                          });
-                          Scaffold.of(context).showSnackBar(SnackBar(content: Text("$item dismissed")));
-                        }
-                      },
-                      child: UserTile(userList[index], () {
-                        dismiss(index);
-                      }),
-                    );
-                  }),
-            );
-          }
-          return Center(child: CircularProgressIndicator());
-        },
-      ),
+      body: usersStream,
       backgroundColor: Colors.pink,
     );
   }
